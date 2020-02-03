@@ -701,9 +701,14 @@ namespace CoreApp
         /// <returns>Returns true if email address is valid email address</returns>
         public bool ValidateEmail(string email)
         {
-            System.Text.RegularExpressions.Regex emailRegex = new System.Text.RegularExpressions.Regex("^(?<user>[^@]+)@(?<host>.+)$");
-            System.Text.RegularExpressions.Match emailMatch = emailRegex.Match(email);
-            return emailMatch.Success;
+            string EId = @"^[a-z][a-z|0-9|]*([_][a-z|0-9]+)*([.][a-z|" +
+               @"0-9]+([_][a-z|0-9]+)*)?@[a-z][a-z|0-9|]*\.([a-z]" +
+               @"[a-z|0-9]*(\.[a-z][a-z|0-9]*)?)$";
+
+            //System.Text.RegularExpressions.Regex emailRegex = new System.Text.RegularExpressions.Regex("^(?<user>[^@]+)@(?<host>.+)$");
+            //System.Text.RegularExpressions.Match emailMatch = emailRegex.Match(email);
+
+            return System.Text.RegularExpressions.Regex.Match(email, EId).Success;
         }
 
         private Button ButtonNew, ButtonSave, ButtonEdit, ButtonUpdate, ButtonDelete, ButtonCancel;
