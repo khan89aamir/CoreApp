@@ -19,17 +19,18 @@ namespace CoreApp
 
         bool _IsEncrypted; // Connection string is encrypted or decrypted.
         string _CommandText;
-        SqlConnection Objcon;
         bool IsRollBack = false;
-        SqlTransaction ObjTrans;
-        SqlDataAdapter ObjDA;
         int Counter = 0;
         string strColumns;
         string strValues;
-        clsCommon ObjCommon = new clsCommon();
-        clsUtility ObjUtil = new clsUtility();
         // List for storing sql parameter.
         char[] c1 = new char[2];
+
+        SqlConnection Objcon;
+        clsCommon ObjCommon = new clsCommon();
+        clsUtility ObjUtil = new clsUtility();
+        SqlTransaction ObjTrans;
+        SqlDataAdapter ObjDA;
         List<SqlParameter> lstSQLParameter = new List<SqlParameter>();
 
         /// <summary>
@@ -193,7 +194,7 @@ namespace CoreApp
                     strCondition = strCondition.Replace("Where", " ");
                 }
 
-                cmd.CommandText = "Delete " + strTableName + " WHERE " + strCondition;
+                cmd.CommandText = "DELETE " + strTableName + " WHERE " + strCondition;
                 _CommandText = cmd.CommandText;
                 result = cmd.ExecuteNonQuery();
 
@@ -259,11 +260,11 @@ namespace CoreApp
 
                 if (ReturnIdentity)
                 {
-                    cmd.CommandText = "Insert into " + strTableName + "(" + strColumns + ") Values(" + strValues + "); Select Scope_Identity()";
+                    cmd.CommandText = "INSERT INTO " + strTableName + "(" + strColumns + ") VALUES(" + strValues + "); SELECT SCOPE_IDENTITY()";
                 }
                 else
                 {
-                    cmd.CommandText = "Insert into " + strTableName + "(" + strColumns + ") Values(" + strValues + ")";
+                    cmd.CommandText = "INSERT INTO " + strTableName + "(" + strColumns + ") VALUES(" + strValues + ")";
                 }
                 _CommandText = cmd.CommandText;
                 cmd.Parameters.AddRange(p);
@@ -336,7 +337,7 @@ namespace CoreApp
                 SqlParameter[] p = lstSQLParameter.ToArray();
 
                 strCondition = strCondition.Replace("where", " ");
-                cmd.CommandText = "Update " + strTableName + " Set " + strColumns + " WHERE " + strCondition;
+                cmd.CommandText = "UPDATE " + strTableName + " SET " + strColumns + " WHERE " + strCondition;
                 _CommandText = cmd.CommandText;
                 cmd.Parameters.AddRange(p);
                 cmd.Connection = Objcon;
@@ -562,7 +563,7 @@ namespace CoreApp
                     cmd.Transaction = ObjTrans;
                 }
                 ObjDA = new SqlDataAdapter();
-                cmd.CommandText = "Select * from " + strTableName + " with(nolock)";
+                cmd.CommandText = "SELECT * FROM " + strTableName + " WITH(NOLOCK)";
                 _CommandText = cmd.CommandText;
                 ObjDA.SelectCommand = cmd;
                 ObjDA.Fill(dt);
@@ -618,11 +619,11 @@ namespace CoreApp
                 if (OrderByclause != null)
                 {
                     OrderByclause = OrderByclause.Replace("order by", " ");
-                    cmd.CommandText = "Select * from " + strTableName + " with(nolock) order by " + OrderByclause;
+                    cmd.CommandText = "SELECT * FROM " + strTableName + " WITH(NOLOCK) order by " + OrderByclause;
                 }
                 else
                 {
-                    cmd.CommandText = "Select * from " + strTableName + " with(nolock)";
+                    cmd.CommandText = "SELECT * FROM " + strTableName + " WITH(NOLOCK)";
                 }
                 ObjDA.SelectCommand = cmd;
                 // Transaction is in progress.
@@ -698,11 +699,11 @@ namespace CoreApp
                 if (OrderByclause != null)
                 {
                     OrderByclause = OrderByclause.Replace("order by", " ");
-                    cmd.CommandText = "Select * from " + strTableName + " with(nolock) WHERE " + strCondition + " ORDER BY " + OrderByclause;
+                    cmd.CommandText = "SELECT * FROM " + strTableName + " WITH(NOLOCK) WHERE " + strCondition + " ORDER BY " + OrderByclause;
                 }
                 else
                 {
-                    cmd.CommandText = "Select * from " + strTableName + " with(nolock) WHERE " + strCondition;
+                    cmd.CommandText = "SELECT * FROM " + strTableName + " WITH(NOLOCK) WHERE " + strCondition;
                 }
                 _CommandText = cmd.CommandText;
                 ObjDA.SelectCommand = cmd;
@@ -766,11 +767,11 @@ namespace CoreApp
                 if (OrderByclause != null)
                 {
                     OrderByclause = OrderByclause.Replace("order by", " ");
-                    cmd.CommandText = "Select " + strColumns + " from " + strTableName + " with(nolock) ORDER BY " + OrderByclause;
+                    cmd.CommandText = "SELECT " + strColumns + " FROM " + strTableName + " WITH(NOLOCK) ORDER BY " + OrderByclause;
                 }
                 else
                 {
-                    cmd.CommandText = "Select " + strColumns + " from " + strTableName + " with(nolock)";
+                    cmd.CommandText = "SELECT " + strColumns + " FROM " + strTableName + " WITH(NOLOCK)";
                 }
                 _CommandText = cmd.CommandText;
                 ObjDA.SelectCommand = cmd;
@@ -841,11 +842,11 @@ namespace CoreApp
                 if (OrderByclause != null)
                 {
                     OrderByclause = OrderByclause.Replace("order by", " ");
-                    cmd.CommandText = "Select " + strColumns + " from " + strTableName + " with(nolock) WHERE " + strCondition + " ORDER BY " + OrderByclause;
+                    cmd.CommandText = "SELECT " + strColumns + " FROM " + strTableName + " WITH(NOLOCK) WHERE " + strCondition + " ORDER BY " + OrderByclause;
                 }
                 else
                 {
-                    cmd.CommandText = "Select " + strColumns + " from " + strTableName + " with(nolock) WHERE " + strCondition;
+                    cmd.CommandText = "SELECT " + strColumns + " FROM " + strTableName + " WITH(NOLOCK) WHERE " + strCondition;
                 }
                 _CommandText = cmd.CommandText;
                 ObjDA.SelectCommand = cmd;
@@ -1349,7 +1350,7 @@ namespace CoreApp
                 {
                     strCondition = strCondition.Replace("Where", " ");
                 }
-                cmd.CommandText = "Select Count(*) from " + strTableName + " with(nolock) WHERE " + strCondition;
+                cmd.CommandText = "SELECT COUNT(1) FROM " + strTableName + " WITH(NOLOCK) WHERE " + strCondition;
                 cmd.Connection = Objcon;
                 // Transaction is in progress.
                 if (ObjTrans != null)
@@ -1397,7 +1398,7 @@ namespace CoreApp
                     Objcon.Open();
                 }
 
-                cmd.CommandText = "Select Count(*) from " + strTableName + " with(nolock)";
+                cmd.CommandText = "SELECT COUNT(1) FROM " + strTableName + " WITH(NOLOCK)";
                 cmd.Connection = Objcon;
                 // Transaction is in progress.
                 if (ObjTrans != null)
@@ -1445,7 +1446,7 @@ namespace CoreApp
                     }
                     Objcon.Open();
                 }
-                cmd.CommandText = "BACKUP database " + strDatabaseName + " TO DISK='" + strPath + @"\" + strBackupFileName.Replace(".bak", "") + ".bak'";
+                cmd.CommandText = "BACKUP DATABASE " + strDatabaseName + " TO DISK='" + strPath + @"\" + strBackupFileName.Replace(".bak", "") + ".bak'";
                 _CommandText = cmd.CommandText;
                 cmd.Connection = Objcon;
                 int result = cmd.ExecuteNonQuery();
@@ -1480,7 +1481,7 @@ namespace CoreApp
                     }
                     Objcon.Open();
                 }
-                cmd.CommandText = "RESTORE DATABASE " + strDatabaseName + " FROM DISK='" + strPath + "' with replace";
+                cmd.CommandText = "RESTORE DATABASE " + strDatabaseName + " FROM DISK='" + strPath + "' WITH REPLACE";
                 _CommandText = cmd.CommandText;
                 cmd.Connection = Objcon;
                 int result = cmd.ExecuteNonQuery();
