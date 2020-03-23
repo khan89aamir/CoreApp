@@ -636,6 +636,43 @@ namespace CoreApp
         /// <summary>
         /// Check if the string is valid name or not at the time of pressing.
         /// </summary>
+        /// <param name="c">Pass the Textbox control.</param>
+        /// <param name="e">Pass the string.</param>
+        /// <returns>Returns true if invalid name or text is numeric else returns false.</returns>
+        public bool IsDecimal(Control c, KeyPressEventArgs e)
+        {
+            bool b = false;
+            try
+            {
+                TextBox txt = (TextBox)c;
+                if (e.KeyChar >= 48 && e.KeyChar <= 57 || e.KeyChar == 8 || e.KeyChar == 46)
+                {
+                    if (txt.SelectionStart == 0 && e.KeyChar != 46 && !txt.Text.Contains("."))
+                        b = false;
+                    else
+                        b = true;
+
+                    if (txt.SelectionStart >= 1 && e.KeyChar == 46 && !txt.Text.Contains("."))
+                        b = false;
+
+                    else if (txt.SelectionStart >= 1 && e.KeyChar != 46)
+                        b = false;
+                }
+                else
+                {
+                    b = true;
+                }
+                return b;
+            }
+            catch (Exception)
+            {
+                return true;
+            }
+        }
+
+        /// <summary>
+        /// Check if the string is valid name or not at the time of pressing.
+        /// </summary>
         /// <param name="e">Pass the string.</param>
         /// <returns>Returns true if invalid name or text is numeric else returns false.</returns>
         public bool IsString(KeyPressEventArgs e)
