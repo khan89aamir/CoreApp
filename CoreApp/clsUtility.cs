@@ -695,6 +695,30 @@ namespace CoreApp
         }
 
         /// <summary>
+        /// Check if the string is valid name or not at the time of pressing.
+        /// </summary>
+        /// <param name="e">Pass the string.</param>
+        /// <returns>Returns true if invalid name or text is Alpha numeric else returns false.</returns>
+        public bool IsAlphaNumeric(KeyPressEventArgs e)
+        {
+            try
+            {
+                if (IsString(e) == false || IsNumeric(e) == false)
+                {
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+            catch (Exception)
+            {
+                return true;
+            }
+        }
+
+        /// <summary>
         /// Get the Image/Picture by passing the byte array of the image.
         /// </summary>
         /// <param name="b">pass byte array</param>
