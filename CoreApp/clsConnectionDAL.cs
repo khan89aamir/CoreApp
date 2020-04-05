@@ -26,6 +26,14 @@ namespace CoreApp
         // List for storing sql parameter.
         char[] c1 = new char[2];
 
+       public enum ParamType
+        {
+            Input,
+            Output
+        }
+
+
+        DataTable dtOutputParm = new DataTable();
         SqlConnection Objcon;
         clsCommon ObjCommon = new clsCommon();
         clsUtility ObjUtil = new clsUtility();
@@ -214,6 +222,27 @@ namespace CoreApp
             return result;
         }
 
+        public DataTable GetOutputParmData()
+        {
+            return dtOutputParm;
+        }
+        private void InitOutputTable()
+        {
+            if (dtOutputParm.Columns.Count==0)
+            {
+                dtOutputParm.Columns.Add("ParmName");
+                dtOutputParm.Columns.Add("Value", typeof(object));
+            }
+        }
+        private void AddRowToOutputParm(string name, object value)
+        {
+          
+            DataRow  dataRow  =dtOutputParm.NewRow();
+            dataRow["ParmName"] = name.Replace("@", "");
+            dataRow["Value"] = value;
+
+            dtOutputParm.Rows.Add(dataRow);
+        }
         private string SetError(string strMethod, string cmdText)
         {
             return " " + strMethod + " <BR><BR><FONT FACE='Courier New'> <b>CommandText : </b> " + cmdText + "</Font><BR><BR>";
@@ -903,12 +932,14 @@ namespace CoreApp
                         // Decrypt the encrypted connection string.
                         str = ObjUtil.Decrypt(sw.ReadLine(), true);
                         sw.Close();
+                        clsConnection_DAL.strConnectionString = str;
                     }
                     else
                     {
                         // Decrypt the encrypted connection string.
                         str = sw.ReadLine();
                         sw.Close();
+                        clsConnection_DAL.strConnectionString = str;
                     }
                 }
                 else
@@ -1842,11 +1873,13 @@ namespace CoreApp
         /// <summary>
         /// Set Store Procedure Data. Assign the data to the specified paramter of the Store procedure.
         /// </summary>
-        /// <param name="strColumnnName">Column Name</param>
+        /// <param name="strParamterName">Name of the Parameter.</param>
+        
         /// <param name="DataType">Data Type of that column</param>
         /// <param name="Value">Value to be passed to the column</param>
+        ///  <param name="parameterType">Parameter Type if its Input or Output. Default it is INPUT</param>
         /// <returns>Returns true after successful execution else returns false.</returns>
-        public bool SetStoreProcedureData(string strParamterName, SqlDbType DataType, object Value)
+        public bool SetStoreProcedureData(string strParamterName, SqlDbType DataType, object Value, ParamType parameterType = ParamType.Input)
         {
             try
             {
@@ -1864,6 +1897,16 @@ namespace CoreApp
                 }
                 SqlParameter p = new SqlParameter("@" + strParamterName.Trim(c1).Replace(" ", string.Empty), DataType);
                 p.Value = Value;
+                if (parameterType == ParamType.Input)
+                {
+                    p.Direction = ParameterDirection.Input;
+
+                }
+                else if (parameterType == ParamType.Output)
+                {
+                    p.Direction = ParameterDirection.Output;
+                }
+              
                 lstSQLParameter.Add(p);
                 Counter++;
                 return true;
@@ -1975,6 +2018,184 @@ namespace CoreApp
             string a = ReadConStringFromFile("AppConfig/ServerConfig.sc", b);
             string[] arr = a.Split(new char[] { ';', '=' });
             return arr[3].ToString();
+        }
+
+        /// <summary>
+        /// Execute the store Procedure and returns the data table.
+        /// </summary>
+        /// <param name="strStoreProcedureName">Name of the procedure.</param>
+        /// <returns>Data Table</returns>
+        public DataTable ExecuteStoreProcedure_Get(string strStoreProcedureName)
+        {
+            // If Transaction is rollback in first attempt then don't fire any other queries.
+            if (IsRollBack)
+            {
+                ResetData();
+                return null;
+            }
+            // clear the output parm table for fresh data.
+            if (dtOutputParm != null && dtOutputParm.Rows.Count > 0)
+            {
+                dtOutputParm.Clear();
+            }
+            SqlCommand cmd = new SqlCommand();
+            DataTable dt = new DataTable();
+            try
+            {
+                if (Objcon.State == ConnectionState.Closed || Objcon.State == ConnectionState.Broken)
+                {
+                    // if Connection object doest have the connection string then set the static connection string .
+                    if (Objcon.ConnectionString.Trim().Length == 0)
+                    {
+                        Objcon.ConnectionString = clsConnection_DAL.strConnectionString;
+                    }
+                    Objcon.Open();
+                }
+
+                // Transaction is in progress.
+                if (ObjTrans != null)
+                {
+                    cmd.Transaction = ObjTrans;
+                }
+
+
+                ObjDA = new SqlDataAdapter();
+
+                
+                cmd.CommandText = strStoreProcedureName;
+                cmd.CommandType = CommandType.StoredProcedure;
+             
+                cmd.Connection = Objcon;
+
+                // if sp is called with parameters.
+                if (lstSQLParameter.Count>0)
+                {
+                    SqlParameter[] p = lstSQLParameter.ToArray();
+                    cmd.Parameters.AddRange(p);
+                }
+
+
+                ObjDA.SelectCommand = cmd;
+              
+                ObjDA.Fill(dt);
+
+                // check if there is any output parameter.
+                for (int i = 0; i < cmd.Parameters.Count; i++)
+                {
+                    if (cmd.Parameters[i].Direction == ParameterDirection.Output)
+                    {
+                        InitOutputTable();
+
+                        AddRowToOutputParm(cmd.Parameters[i].ParameterName, cmd.Parameters[i].Value);
+
+                    }
+                }
+
+                CloseConnection();
+            }
+            catch (Exception ex)
+            {
+                if (ObjTrans != null)
+                {
+                    IsRollBack = true;
+                    ObjTrans.Rollback();
+                }
+                string strMethod = System.Reflection.MethodBase.GetCurrentMethod().Name;
+                CloseConnection();
+                clsCommon.ShowError(ex, SetError("ExecuteStoreProcedureStatement(string strStoreProcedureName, bool ReturnOutput)", cmd.CommandText));
+                ResetData();
+                return null;
+            }
+            ResetData();
+           
+            return dt;
+        }
+
+        /// <summary>
+        /// Execute the store Procedure for DML operation and  and returns true or false
+        /// </summary>
+        /// <param name="strStoreProcedureName">Name of the procedure</param>
+        /// <returns>Operation success result</returns>
+        public bool ExecuteStoreProcedure_DML(string strStoreProcedureName)
+        {
+            bool result = false;
+            if (dtOutputParm!=null && dtOutputParm.Rows.Count>0)
+            {
+                dtOutputParm.Clear();
+            }
+          
+            // If Transaction is rollback in first attempt then don't fire any other queries.
+            if (IsRollBack)
+            {
+                ResetData();
+                result = false;
+            }
+            SqlCommand cmd = new SqlCommand();
+
+            try
+            {
+                if (Objcon.State == ConnectionState.Closed || Objcon.State == ConnectionState.Broken)
+                {
+                    // if Connection object doest have the connection string then set the static connection string .
+                    if (Objcon.ConnectionString.Trim().Length == 0)
+                    {
+                        Objcon.ConnectionString = clsConnection_DAL.strConnectionString;
+                    }
+                    Objcon.Open();
+                }
+
+                // Transaction is in progress.
+                if (ObjTrans != null)
+                {
+                    cmd.Transaction = ObjTrans;
+                }
+
+                cmd.CommandText = strStoreProcedureName;
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                cmd.Connection = Objcon;
+
+                // if sp is called with parameters.
+                if (lstSQLParameter.Count > 0)
+                {
+                    SqlParameter[] p = lstSQLParameter.ToArray();
+                    cmd.Parameters.AddRange(p);
+
+                }
+
+                cmd.ExecuteNonQuery();
+
+                // check if there is any output parameter.
+                for (int i = 0; i < cmd.Parameters.Count; i++)
+                {
+                    if (cmd.Parameters[i].Direction == ParameterDirection.Output)
+                    {
+                        InitOutputTable();
+
+                        AddRowToOutputParm(cmd.Parameters[i].ParameterName, cmd.Parameters[i].Value);
+
+                    }
+                }
+
+                result = true;
+                CloseConnection();
+            }
+            catch (Exception ex)
+            {
+                if (ObjTrans != null)
+                {
+                    IsRollBack = true;
+                    ObjTrans.Rollback();
+                }
+                string strMethod = System.Reflection.MethodBase.GetCurrentMethod().Name;
+                CloseConnection();
+                clsCommon.ShowError(ex, SetError("ExecuteStoreProcedureStatement(string strStoreProcedureName, bool ReturnOutput)", cmd.CommandText));
+                ResetData();
+                result = false;
+            }
+            ResetData();
+
+            return result;
         }
     }
 }
