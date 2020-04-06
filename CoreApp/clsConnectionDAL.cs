@@ -1917,6 +1917,12 @@ namespace CoreApp
                 else if (parameterType == ParamType.Output)
                 {
                     p.Direction = ParameterDirection.Output;
+                    // set the Max size by default
+                    if (p.SqlDbType==SqlDbType.NVarChar || p.SqlDbType== SqlDbType.VarChar || p.SqlDbType == SqlDbType.VarBinary)
+                    {
+                        p.Size = -1;
+                        
+                    }
                 }
 
                 lstSQLParameter.Add(p);
