@@ -25,12 +25,11 @@ namespace CoreApp
                 MessageBox.Show("Enter Connecting String First.", "Connection String Builder.", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
                 return;
             }
-            if (isDecrypt)
+            else if (isDecrypt)
             {
                 MessageBox.Show("Connecting String is already decrypted.", "Connection String Builder.", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
                 return;
             }
-
             string str = Decrypt(txtDataSource.Text, true);
             txtDataSource.Text = str;
             isEncrypt = false;
@@ -49,10 +48,9 @@ namespace CoreApp
             {
                 MessageBox.Show("Connecting String is already encrypted.", "Connection String Builder.", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
                 return;
-                
             }
             
-            string str=  Encrypt(txtDataSource.Text,true);
+           string str=  Encrypt(txtDataSource.Text,true);
            txtDataSource.Text = str;
            isEncrypt = true;
            isDecrypt = false;
@@ -152,12 +150,10 @@ namespace CoreApp
             {
                 Directory.CreateDirectory("AppConfig");
             }
-
-            StreamWriter sw = new StreamWriter("AppConfig/Server.sc",true);
+            StreamWriter sw = new StreamWriter("AppConfig/ServerConfig.sc", true);
             sw.WriteLine(txtDataSource.Text);
             sw.Close();
             DirectoryInfo d = new DirectoryInfo("AppConfig");
-
             clsUtility.ShowInfoMessage("Connection string is saved successfully.\nFile Path: "+d.FullName, "CoreApp");
         }
     }

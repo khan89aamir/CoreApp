@@ -1684,7 +1684,7 @@ namespace CoreApp
             {
                 if (!clsCommon.isErrorWindowOpen)
                 {
-                    clsCommon.ShowError(ex.ToString(), "WriteToFile()");
+                    clsCommon.ShowError(ex.ToString(), "WriteToFile(string strText, string path, bool append)");
                 }
                 return false;
             }
@@ -1695,17 +1695,17 @@ namespace CoreApp
         /// Write a text to the specified path with auto append.
         /// </summary>
         /// <param name="strText">Text string to be written to the file.</param>
-        /// <param name="path">Only name of file.</param>        
+        /// <param name="filename">Name of file.</param>        
         /// <returns></returns>
-        public bool WriteToFile(string strText, string path)
+        public bool WriteToFile(string strText, string filename)
         {
             try
             {
-                path = path + "_" + DateTime.Now.ToString("yyyyMMdd") + ".log";
-                StreamWriter sw = new StreamWriter(path, true);
-                sw.WriteLine("Log Date : " + DateTime.Now.ToString(), path, true);
-                sw.WriteLine("Log Text : " + strText, path, true);
-                sw.WriteLine("______________________________________", path, true);
+                filename = filename + "_" + DateTime.Now.ToString("yyyyMMdd") + ".log";
+                StreamWriter sw = new StreamWriter(filename, true);
+                sw.WriteLine("Log Date : " + DateTime.Now.ToString(), filename, true);
+                sw.WriteLine("Log Text : " + strText, filename, true);
+                sw.WriteLine("______________________________________", filename, true);
                 sw.Close();
             }
             catch (UnauthorizedAccessException)
@@ -1716,7 +1716,7 @@ namespace CoreApp
             {
                 if (!clsCommon.isErrorWindowOpen)
                 {
-                    clsCommon.ShowError(ex.ToString(), "WriteToFile()");
+                    clsCommon.ShowError(ex.ToString(), "WriteToFile(string strText, string filename)");
                 }
                 return false;
             }

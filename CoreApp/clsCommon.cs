@@ -73,7 +73,6 @@ namespace CoreApp
             /// Set this action when user click on cancel button.
             /// </summary>
             AfterCancel,
-
             /// <summary>
             /// Set this action when user double click on Grid button.
             /// </summary>
@@ -85,7 +84,6 @@ namespace CoreApp
             if (ShowErrorWindow)
             {
                 ErrorWindow ObjError = new ErrorWindow();
-
                 string strhtml = "<html>" +
                                "<head>" +
                                    "<title></title>" +
@@ -99,15 +97,11 @@ namespace CoreApp
                                    "</style>" +
                                "</head>" +
                                "<body>" +
-
                                        "<strong><span class=\"auto-style1\">Error Occurred :</span><br />" +
-
                                        "<span class=\"auto-style2\"><br>Method :</strong></span>" + strMethod +
-
                                        "<br /><span class=\"auto-style2\"><strong>Exception Text :" +
                                "</strong></span>" + ex.ToString() +
                                "</body>" +
-
                                "</html>";
 
                 if (ObjError.webBrowser1 != null)
@@ -150,7 +144,6 @@ namespace CoreApp
                                    "</style>" +
                                "</head>" +
                                "<body>" +
-
                                        "<strong><span class=\"auto-style1\">Error Occurred :</span><br />" +
 
                                        "<span class=\"auto-style2\"><br>Method :</strong></span>" + strMethod +
@@ -158,7 +151,6 @@ namespace CoreApp
                                        "<br /><span class=\"auto-style2\"><strong>Exception Text :" +
                                "</strong></span>" + strMessage +
                                "</body>" +
-
                                "</html>";
 
                 if (!clsCommon.isErrorWindowOpen)

@@ -1912,16 +1912,14 @@ namespace CoreApp
                 if (parameterType == ParamType.Input)
                 {
                     p.Direction = ParameterDirection.Input;
-
                 }
                 else if (parameterType == ParamType.Output)
                 {
                     p.Direction = ParameterDirection.Output;
                     // set the Max size by default
-                    if (p.SqlDbType==SqlDbType.NVarChar || p.SqlDbType== SqlDbType.VarChar || p.SqlDbType == SqlDbType.VarBinary)
+                    if (p.SqlDbType == SqlDbType.NVarChar || p.SqlDbType == SqlDbType.VarChar || p.SqlDbType == SqlDbType.VarBinary)
                     {
                         p.Size = -1;
-                        
                     }
                 }
 

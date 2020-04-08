@@ -314,7 +314,7 @@ namespace CoreApp
             }
             catch (Exception ex)
             {
-                clsCommon.ShowError(ex, "CloseLoading()");
+                clsCommon.ShowError(ex, "CloseLoadingDialog()");
             }
         }
 
