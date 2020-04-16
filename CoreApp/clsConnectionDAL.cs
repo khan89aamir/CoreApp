@@ -1917,7 +1917,7 @@ namespace CoreApp
                 else if (parameterType == ParamType.Output)
                 {
                     p.Direction = ParameterDirection.Output;
-                    // set the Max size by default
+                    // set the Max size by default for below parm
                     if (p.SqlDbType==SqlDbType.NVarChar || p.SqlDbType== SqlDbType.VarChar || p.SqlDbType == SqlDbType.VarBinary)
                     {
                         p.Size = -1;
@@ -2094,5 +2094,6 @@ namespace CoreApp
             ResetData();
             return result;
         }
+     
     }
 }

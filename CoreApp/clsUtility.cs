@@ -8,6 +8,7 @@ using System.Data;
 using System.Security.Cryptography;
 using System.Windows.Forms;
 using Microsoft.Win32;
+using System.Data.SqlClient;
 
 namespace CoreApp
 {
@@ -1722,5 +1723,113 @@ namespace CoreApp
             }
             return true;
         }
+
+        public static bool  HasFormRights(int FormID, int OperationID)
+        {
+            bool Result = false;
+            string cmdText = "";
+            try
+            {
+                using (SqlConnection con = new SqlConnection(clsConnection_DAL.strConnectionString))
+                {
+                    string strCondition = "";
+                    if (OperationID == 1)
+                    {
+                        strCondition = "AND IsView=1";
+                    }
+                    else if (OperationID == 2)
+                    {
+                        strCondition = "AND IsSave=1";
+
+                    }
+                    else if (OperationID == 3)
+                    {
+                        strCondition = "AND IsUpdate=1";
+
+                    }
+                    else if (OperationID == 4)
+                    {
+                        strCondition = "AND IsDelete=1";
+
+                    }
+                    else if (OperationID == 5)
+                    {
+                        strCondition = "AND IsOther=1";
+
+                    }
+
+                    SqlCommand cmd = new SqlCommand();
+                    cmd.CommandText = "select count(1) from " + clsUtility.DBName + ".dbo.tblUserRights where FormID=" + FormID + " " + strCondition+" AND UserID="+clsUtility.LoginID;
+                    cmdText = cmd.CommandText;
+                    cmd.Connection = con;
+                    con.Open();
+                    object obj = cmd.ExecuteScalar();
+                    if (obj != null)
+                    {
+                        if (Convert.ToInt32(obj) > 0)
+                        {
+                            Result = true;
+                        }
+                        else
+                        {
+                            Result = false;
+                        }
+                    }
+                    con.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+               
+
+                clsCommon.ShowError(ex, SetError("HasFormRights(int FormID, int OperationID, string dbName)", cmdText));
+            }
+
+            return Result;
+        }
+
+        public static bool HasFormRights(int FormID)
+        {
+            bool Result = false;
+            string cmdText = "";
+            try
+            {
+                using (SqlConnection con = new SqlConnection(clsConnection_DAL.strConnectionString))
+                {
+                
+                    SqlCommand cmd = new SqlCommand();
+                    cmd.CommandText = "select count(1) from " + clsUtility.DBName + ".dbo.tblUserRights where FormID=" + FormID + " AND UserID=" + clsUtility.LoginID;
+                    cmdText = cmd.CommandText;
+                    cmd.Connection = con;
+                    con.Open();
+                    object obj = cmd.ExecuteScalar();
+                    if (obj != null)
+                    {
+                        if (Convert.ToInt32(obj) > 0)
+                        {
+                            Result = true;
+                        }
+                        else
+                        {
+                            Result = false;
+                        }
+                    }
+                    con.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+
+
+                clsCommon.ShowError(ex, SetError("HasFormRights(int FormID, int OperationID, string dbName)", cmdText));
+            }
+
+            return Result;
+        }
+        private static string SetError(string strMethod, string cmdText)
+        {
+            return " " + strMethod + " <BR><BR><FONT FACE='Courier New'> <b>CommandText : </b> " + cmdText + "</Font><BR><BR>";
+        }
+
     }
 }
