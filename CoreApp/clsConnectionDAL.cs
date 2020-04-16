@@ -1912,7 +1912,6 @@ namespace CoreApp
                 if (parameterType == ParamType.Input)
                 {
                     p.Direction = ParameterDirection.Input;
-
                 }
                 else if (parameterType == ParamType.Output)
                 {
@@ -1921,7 +1920,6 @@ namespace CoreApp
                     if (p.SqlDbType==SqlDbType.NVarChar || p.SqlDbType== SqlDbType.VarChar || p.SqlDbType == SqlDbType.VarBinary)
                     {
                         p.Size = -1;
-                        
                     }
                 }
 

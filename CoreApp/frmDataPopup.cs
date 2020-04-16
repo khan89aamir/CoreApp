@@ -21,11 +21,9 @@ namespace CoreApp
         {
             InitializeComponent();
         }
-
         /// <summary>
         /// Set the default width of the popup.Default is false. 
         /// </summary>
-      
         private void dataGridView1_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
         {
             dgvPopup.DefaultCellStyle.Font = new Font("Times", 10, FontStyle.Regular);
@@ -54,7 +52,6 @@ namespace CoreApp
             {
                 this.Height = Height;
             }
-            
             // if only one record is there then set the height as 60
             if (dgvPopup.Rows.Count == 1)
             {
@@ -119,7 +116,7 @@ namespace CoreApp
                 clsUtility.ObjPopupControl.Clear();
                 clsCommon.IsPoupGridCellClick = false;
             }
-            catch (Exception ex)
+            catch (Exception)
             {                              
             }                    
             this.Close();

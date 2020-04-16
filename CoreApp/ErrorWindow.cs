@@ -31,7 +31,6 @@ namespace CoreApp
             catch (Exception)
             { 
             }
-            
         }
 
         private void ErrorWindow_Load(object sender, EventArgs e)
