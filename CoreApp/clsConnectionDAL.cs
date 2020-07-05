@@ -1939,8 +1939,8 @@ namespace CoreApp
         /// Execute the store Procedure and returns the data table.
         /// </summary>
         /// <param name="strStoreProcedureName">Name of the procedure.</param>
-        /// <returns>Data Table</returns>
-        public DataTable ExecuteStoreProcedure_Get(string strStoreProcedureName)
+        /// <returns>Data Set</returns>
+        public DataSet ExecuteStoreProcedure_Get(string strStoreProcedureName)
         {
             // If Transaction is rollback in first attempt then don't fire any other queries.
             if (IsRollBack)
@@ -1954,7 +1954,7 @@ namespace CoreApp
                 dtOutputParm.Clear();
             }
             SqlCommand cmd = new SqlCommand();
-            DataTable dt = new DataTable();
+            DataSet ds = new DataSet();
             try
             {
                 if (Objcon.State == ConnectionState.Closed || Objcon.State == ConnectionState.Broken)
@@ -1984,7 +1984,7 @@ namespace CoreApp
                     cmd.Parameters.AddRange(p);
                 }
                 ObjDA.SelectCommand = cmd;
-                ObjDA.Fill(dt);
+                ObjDA.Fill(ds);
 
                 // check if there is any output parameter.
                 for (int i = 0; i < cmd.Parameters.Count; i++)
@@ -2011,7 +2011,7 @@ namespace CoreApp
                 return null;
             }
             ResetData();
-            return dt;
+            return ds;
         }
 
         /// <summary>
