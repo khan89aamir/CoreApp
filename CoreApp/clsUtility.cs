@@ -171,6 +171,24 @@ namespace CoreApp
         }
 
         /// <summary>
+        /// Check if the dataset has any table or it is null.
+        /// This method Returns True if dataset is not null and has more than zero table count else returns false.
+        /// </summary>
+        /// <param name="ds">DataSet</param>
+        /// <returns>Returns True if dataset is not null and has more than zero talbe count else returns false.</returns>
+        public bool ValidateDataSet(DataSet ds)
+        {
+            if (ds != null && ds.Tables.Count > 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
         /// Encrypt a string using dual encryption method. Return a encrypted  Text
         /// </summary>
         /// <param name="toEncrypt">string to be encrypted</param>
@@ -363,10 +381,9 @@ namespace CoreApp
             dgv.DefaultCellStyle.SelectionBackColor = Color.Navy;
             dgv.DefaultCellStyle.SelectionForeColor = Color.White;
 
-            dgv.AllowUserToResizeColumns = true;
+            dgv.AllowUserToResizeColumns = false;
             dgv.AllowUserToAddRows = false;
             dgv.AllowUserToDeleteRows = false;
-            dgv.AllowUserToResizeColumns = true;
             dgv.AllowUserToResizeRows = false;
 
             dgv.BackgroundColor = Color.White;
@@ -388,11 +405,10 @@ namespace CoreApp
             dgv.ColumnHeadersDefaultCellStyle.Font = new Font("Times New Roman", 12, FontStyle.Regular);
             dgv.DefaultCellStyle.SelectionBackColor = Color.Navy;
             dgv.DefaultCellStyle.SelectionForeColor = Color.White;
-            dgv.AllowUserToResizeColumns = true;
 
             dgv.AllowUserToAddRows = false;
             dgv.AllowUserToDeleteRows = false;
-            dgv.AllowUserToResizeColumns = true;
+            dgv.AllowUserToResizeColumns = false;
             dgv.AllowUserToResizeRows = false;
 
             dgv.BackgroundColor = BackColor;
@@ -462,7 +478,7 @@ namespace CoreApp
 
             // Set the Text on the  [upper left Corner cell] of the Grid view
             dgv.TopLeftHeaderCell.Value = "Sr.No.";
-            dgv.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.EnableResizing;
+            dgv.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.DisableResizing;
             dgv.RowHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
         }
 
@@ -526,6 +542,15 @@ namespace CoreApp
         }
 
         /// <summary>
+        /// Show Information message Dialog box with default icon and button.
+        /// </summary>
+        /// <param name="strMessage">Message text.</param>
+        public static void ShowInfoMessage(string strMessage)
+        {
+            MessageBox.Show(strMessage, strProjectTitle, MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        /// <summary>
         /// Show Error Message Dialog box with Error icon and button.
         /// </summary>
         /// <param name="strMessage">Message text</param>
@@ -533,6 +558,15 @@ namespace CoreApp
         public static void ShowErrorMessage(string strMessage, string Title)
         {
             MessageBox.Show(strMessage, Title, MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
+        /// <summary>
+        /// Show Error Message Dialog box with Error icon and button.
+        /// </summary>
+        /// <param name="strMessage">Message text</param>
+        public static void ShowErrorMessage(string strMessage)
+        {
+            MessageBox.Show(strMessage, strProjectTitle, MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
         /// <summary>
@@ -544,6 +578,21 @@ namespace CoreApp
         public static bool ShowQuestionMessage(string strMessage, string Title)
         {
             DialogResult d = MessageBox.Show(strMessage, Title, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (d == DialogResult.Yes)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Show a Question  Dialog  Message with Question mark and Yes No button.
+        /// </summary>
+        /// <param name="strMessage">Message Text to be passed.</param>
+        /// <returns>If user press Yes it will return True else False.</returns>
+        public static bool ShowQuestionMessage(string strMessage)
+        {
+            DialogResult d = MessageBox.Show(strMessage, strProjectTitle, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (d == DialogResult.Yes)
             {
                 return true;
@@ -1755,7 +1804,7 @@ namespace CoreApp
                     }
 
                     SqlCommand cmd = new SqlCommand();
-                    cmd.CommandText = "SELECT COUNT(1) FROM " + clsUtility.DBName + ".dbo.tblUserRights WITH(NOLOCK) WHERE FormID=" + FormID + " " + strCondition+" AND UserID="+clsUtility.LoginID;
+                    cmd.CommandText = "SELECT COUNT(1) FROM " + clsUtility.DBName + ".dbo.tblUserRights WITH(NOLOCK) WHERE FormID=" + FormID + " " + strCondition + " AND UserID=" + clsUtility.LoginID;
                     cmdText = cmd.CommandText;
                     cmd.Connection = con;
                     con.Open();
@@ -1818,6 +1867,33 @@ namespace CoreApp
         private static string SetError(string strMethod, string cmdText)
         {
             return " " + strMethod + " <BR><BR><FONT FACE='Courier New'> <b>CommandText : </b> " + cmdText + "</Font><BR><BR>";
+        }
+
+        /// <summary>
+        /// This method is checking whether Entered Form is open o not.
+        /// </summary>
+        /// <param name="formType">Enter name of Form. i.e typeof(Form Name)</param>
+        /// <returns>Return True if Form is opened</returns>
+        private bool IsAlreadyOpen(Type formType)
+        {
+            bool isOpen = false;
+            try
+            {
+                foreach (Form f in Application.OpenForms)
+                {
+                    if (f.GetType() == formType)
+                    {
+                        f.BringToFront();
+                        f.WindowState = FormWindowState.Normal;
+                        isOpen = true;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                clsCommon.ShowError(ex.ToString(), "IsAlreadyOpen(Type formType)");
+            }
+            return isOpen;
         }
     }
 }
