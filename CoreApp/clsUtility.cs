@@ -1874,7 +1874,7 @@ namespace CoreApp
         /// </summary>
         /// <param name="formType">Enter name of Form. i.e typeof(Form Name)</param>
         /// <returns>Return True if Form is opened</returns>
-        private bool IsAlreadyOpen(Type formType)
+        public bool IsAlreadyOpen(Type formType)
         {
             bool isOpen = false;
             try
