@@ -40,7 +40,7 @@ namespace CoreApp
             dgvPopup.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgvPopup.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvPopup.RowHeadersVisible = false;
-          
+
             int Height = dgvPopup.Rows.GetRowsHeight(DataGridViewElementStates.None);
             int Width = dgvPopup.Columns.GetColumnsWidth(DataGridViewElementStates.None);
 
@@ -67,15 +67,15 @@ namespace CoreApp
             }
             if (!clsUtility.SetDataPoupDefaultWidth)
             {
-                this.Width = Width;    
+                this.Width = Width;
             }
         }
-        
+
         private void dgvPopup_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             try
             {
-                if (e.RowIndex == -1)
+                if (e.RowIndex == -1 || e.ColumnIndex == -1)
                 {
                     return;
                 }
@@ -91,7 +91,6 @@ namespace CoreApp
                             Control c = clsUtility.ObjPopupControl[dgvPopup.Columns[i].Name];
                             if (c != null)
                             {
-
                                 if (c.GetType() == typeof(DateTimePicker))
                                 {
                                     ((DateTimePicker)c).Value = Convert.ToDateTime(selectedRows[0].Cells[dgvPopup.Columns[i].Name].Value);
@@ -100,7 +99,7 @@ namespace CoreApp
                                 {
                                     c.Text = selectedRows[0].Cells[dgvPopup.Columns[i].Name].Value.ToString();
                                 }
-                                else if (c.GetType()==typeof(RichTextBox))
+                                else if (c.GetType() == typeof(RichTextBox))
                                 {
                                     c.Text = selectedRows[0].Cells[dgvPopup.Columns[i].Name].Value.ToString();
                                 }
@@ -109,7 +108,7 @@ namespace CoreApp
                                     c.Text = selectedRows[0].Cells[dgvPopup.Columns[i].Name].Value.ToString();
                                 }
                             }
-                        }                      
+                        }
                     }
                     clsCommon.IsForCompleted = true;
                 }
@@ -117,21 +116,21 @@ namespace CoreApp
                 clsCommon.IsPoupGridCellClick = false;
             }
             catch (Exception)
-            {                              
-            }                    
+            {
+            }
             this.Close();
         }
 
         private void dgvPopup_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyData==Keys.Enter)
+            if (e.KeyData == Keys.Enter)
             {
-                 clsCommon.IsPoupGridCellClick = true;
+                clsCommon.IsPoupGridCellClick = true;
                 DataGridViewSelectedRowCollection selectedRows = dgvPopup.SelectedRows;
-                if (selectedRows.Count>0)
+                if (selectedRows.Count > 0)
                 {
                     clsCommon.IsForCompleted = false;
-                    for (int i = 0; i <selectedRows[0].Cells.Count; i++)
+                    for (int i = 0; i < selectedRows[0].Cells.Count; i++)
                     {
                         if (clsUtility.ObjPopupControl.ContainsKey(dgvPopup.Columns[i].Name))
                         {
@@ -162,7 +161,12 @@ namespace CoreApp
                 clsUtility.ObjPopupControl.Clear();
                 clsCommon.IsPoupGridCellClick = false;
                 this.Close();
-            }  
+            }
+        }
+
+        private void dgvPopup_ColumnAdded(object sender, DataGridViewColumnEventArgs e)
+        {
+            dgvPopup.Columns[e.Column.Index].ReadOnly = true;
         }
     }
 }
