@@ -448,7 +448,6 @@ namespace CoreApp
             {
                 dSetControlText d = new dSetControlText(SetControlText);
                 c1.Invoke(d, new object[] { c1, str });
-
             }
             else
             {

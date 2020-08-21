@@ -18,16 +18,19 @@ namespace CoreApp
             InitializeComponent();
         }
 
+        bool isEncrypt;
+        bool isDecrypt;
+
         private void button2_Click(object sender, EventArgs e)
         {
             if (txtDataSource.Text.Trim().Length == 0)
             {
-                MessageBox.Show("Enter Connecting String First.", "Connection String Builder.", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+                clsUtility.ShowInfoMessage("Enter Connecting String First.", "Connection String Builder.");
                 return;
             }
             else if (isDecrypt)
             {
-                MessageBox.Show("Connecting String is already decrypted.", "Connection String Builder.", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+                clsUtility.ShowInfoMessage("Connecting String is already decrypted.", "Connection String Builder.");
                 return;
             }
             string str = Decrypt(txtDataSource.Text, true);
@@ -35,18 +38,17 @@ namespace CoreApp
             isEncrypt = false;
             isDecrypt = true;
         }
-        bool isEncrypt;
-        bool isDecrypt;
+
         private void button1_Click(object sender, EventArgs e)
         {
             if (txtDataSource.Text.Trim().Length==0)
             {
-                MessageBox.Show("Enter Connecting String First.", "Connection String Builder.", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+                clsUtility.ShowInfoMessage("Enter Connecting String First.", "Connection String Builder.");
                 return;
             }
             if (isEncrypt)
             {
-                MessageBox.Show("Connecting String is already encrypted.", "Connection String Builder.", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+                clsUtility.ShowInfoMessage("Connecting String is already encrypted.", "Connection String Builder.");
                 return;
             }
             
@@ -91,7 +93,7 @@ namespace CoreApp
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.ToString());
+                clsUtility.ShowErrorMessage(ex.ToString());
                 return null;
             }
         }
@@ -133,7 +135,7 @@ namespace CoreApp
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.ToString());
+                clsUtility.ShowErrorMessage(ex.ToString());
                 return null;
             }
         }
@@ -141,7 +143,7 @@ namespace CoreApp
         private void button3_Click(object sender, EventArgs e)
         {
             Clipboard.SetText(txtDataSource.Text);
-            MessageBox.Show("Connection string copied to the clipboard");
+            clsUtility.ShowInfoMessage("Connection string copied to the clipboard");
         }
 
         private void button4_Click(object sender, EventArgs e)

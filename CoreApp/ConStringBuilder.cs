@@ -19,41 +19,43 @@ namespace CoreApp
 
         private void button1_Click(object sender, EventArgs e)
         {
+            SqlConnectionStringBuilder ConBuilder = new SqlConnectionStringBuilder();
+
             if (txtDataSource.Text.Trim().Length == 0)
             {
-                MessageBox.Show("Enter Data Source.", "Connection String Builder.", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+                clsUtility.ShowInfoMessage("Enter Data Source.", "Connection String Builder.");
                 return;
             }
 
             else if (txtInitialCatalog.Text.Trim().Length == 0)
             {
-                MessageBox.Show("Enter Initial Catalog.(Database name)", "Connection String Builder.", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+                clsUtility.ShowInfoMessage("Enter Initial Catalog.(Database name)", "Connection String Builder.");
                 return;
             }
 
             else if (comboBox1.SelectedIndex == -1)
             {
-                MessageBox.Show("Select Integrated Security.", "Connection String Builder.", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+                clsUtility.ShowInfoMessage("Select Integrated Security.", "Connection String Builder.");
                 return;
             }
             else if (comboBox1.SelectedIndex == 0 || comboBox1.SelectedIndex == 2)
             {
                 if (txtUserID.Text.Trim().Length == 0)
                 {
-                    MessageBox.Show("Enter User ID.", "Connection String Builder.", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+                    clsUtility.ShowInfoMessage("Enter User ID.", "Connection String Builder.");
                     return;
                 }
 
                 if (txtPassword.Text.Trim().Length == 0)
                 {
-                    MessageBox.Show("Enter Password.", "Connection String Builder.", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+                    clsUtility.ShowInfoMessage("Enter Password.", "Connection String Builder.");
                     return;
                 }
             }
-            SqlConnectionStringBuilder ConBuilder = new SqlConnectionStringBuilder();
-            ConBuilder.DataSource = txtDataSource.Text;
 
+            ConBuilder.DataSource = txtDataSource.Text;
             ConBuilder.InitialCatalog = txtInitialCatalog.Text;
+
             if (comboBox1.SelectedIndex == 1)
             {
                 ConBuilder.IntegratedSecurity = Convert.ToBoolean(comboBox1.SelectedItem);
@@ -78,12 +80,12 @@ namespace CoreApp
             {
                 if (txtMaxPoolSize.Text.Trim().Length == 0)
                 {
-                    MessageBox.Show("Enter MaxPool Size.", "Connection String Builder.", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+                    clsUtility.ShowInfoMessage("Enter MaxPool Size.", "Connection String Builder.");
                     return;
                 }
                 if (txtMinPoolSize.Text.Trim().Length == 0)
                 {
-                    MessageBox.Show("Enter MinPool Size.", "Connection String Builder.", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+                    clsUtility.ShowInfoMessage("Enter MinPool Size.", "Connection String Builder.");
                     return;
                 }
                 ConBuilder.MaxPoolSize = Convert.ToInt32(txtMaxPoolSize.Text);

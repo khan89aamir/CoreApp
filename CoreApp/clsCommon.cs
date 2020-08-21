@@ -14,6 +14,11 @@ namespace CoreApp
     public class clsCommon
     {
         /// <summary>
+        /// variable for the checking if the for loop is completed or not.
+        /// </summary>
+        internal static bool IsForCompleted = false;
+
+        /// <summary>
         /// Flag to determine if the thread is running or not.
         /// </summary>
         public static bool IsThreadRunning;
@@ -115,8 +120,8 @@ namespace CoreApp
                 }
                 else
                 {
-                    MessageBox.Show(Environment.NewLine + "Exception Text : " + ex.ToString() + Environment.NewLine +
-                                       "----" + Environment.NewLine + "Note: You are seeing this message in this window because your Thread Apartment State is not STA.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    clsUtility.ShowErrorMessage(Environment.NewLine + "Exception Text : " + ex.ToString() + Environment.NewLine +
+                                       "----" + Environment.NewLine + "Note: You are seeing this message in this window because your Thread Apartment State is not STA.", "Error");
                 }
             }
             else
@@ -161,8 +166,8 @@ namespace CoreApp
                 }
                 else
                 {
-                    MessageBox.Show(Environment.NewLine + "Exception Text : " + strMessage + Environment.NewLine +
-                                         "----" + Environment.NewLine + "Note: You are seeing this message in this window because your Thread Apartment State is not STA.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    clsUtility.ShowErrorMessage(Environment.NewLine + "Exception Text : " + strMessage + Environment.NewLine +
+                                         "----" + Environment.NewLine + "Note: You are seeing this message in this window because your Thread Apartment State is not STA.", "Error");
                 }
             }
             else
@@ -170,7 +175,5 @@ namespace CoreApp
                 CoreErrorText = strMessage;
             }
         }
-        // variable for the checking if the for loop is completed or not.
-        internal static bool IsForCompleted = false;
     }
 }

@@ -32,7 +32,6 @@ namespace CoreApp
             Output
         }
 
-
         DataTable dtOutputParm = new DataTable();
         SqlConnection Objcon;
         clsCommon ObjCommon = new clsCommon();
@@ -174,50 +173,52 @@ namespace CoreApp
             }
 
             int result = 0;
-            SqlCommand cmd = new SqlCommand();
-            try
+            using (SqlCommand cmd = new SqlCommand())
             {
-                if (Objcon.State == ConnectionState.Closed || Objcon.State == ConnectionState.Broken)
+                try
                 {
-                    // if Connection object doest have the connection string then set the static connection string .
-                    if (Objcon.ConnectionString.Trim().Length == 0)
+                    if (Objcon.State == ConnectionState.Closed || Objcon.State == ConnectionState.Broken)
                     {
-                        Objcon.ConnectionString = clsConnection_DAL.strConnectionString;
+                        // if Connection object doest have the connection string then set the static connection string .
+                        if (Objcon.ConnectionString.Trim().Length == 0)
+                        {
+                            Objcon.ConnectionString = clsConnection_DAL.strConnectionString;
+                        }
+                        Objcon.Open();
                     }
-                    Objcon.Open();
-                }
 
-                DataTable dt = new DataTable();
-                // Transaction is in progress.
-                if (ObjTrans != null)
+                    DataTable dt = new DataTable();
+                    // Transaction is in progress.
+                    if (ObjTrans != null)
+                    {
+                        cmd.Transaction = ObjTrans;
+                    }
+
+                    cmd.Connection = Objcon;
+
+                    //Replace the where keyword by empty string.
+                    if (strCondition != null)
+                    {
+                        strCondition = strCondition.Replace("Where", " ");
+                    }
+
+                    cmd.CommandText = "DELETE " + strTableName + " WHERE " + strCondition;
+                    _CommandText = cmd.CommandText;
+                    result = cmd.ExecuteNonQuery();
+
+                    CloseConnection();
+                }
+                catch (Exception ex)
                 {
-                    cmd.Transaction = ObjTrans;
+                    if (ObjTrans != null)
+                    {
+                        IsRollBack = true;
+                        ObjTrans.Rollback();
+                    }
+                    CloseConnection();
+                    clsCommon.ShowError(ex, SetError("DeleteData(string strTableName, string strCondition)", cmd.CommandText));
+                    return -1;
                 }
-
-                cmd.Connection = Objcon;
-
-                //Replace the where keyword by empty string.
-                if (strCondition != null)
-                {
-                    strCondition = strCondition.Replace("Where", " ");
-                }
-
-                cmd.CommandText = "DELETE " + strTableName + " WHERE " + strCondition;
-                _CommandText = cmd.CommandText;
-                result = cmd.ExecuteNonQuery();
-
-                CloseConnection();
-            }
-            catch (Exception ex)
-            {
-                if (ObjTrans != null)
-                {
-                    IsRollBack = true;
-                    ObjTrans.Rollback();
-                }
-                CloseConnection();
-                clsCommon.ShowError(ex, SetError("DeleteData(string strTableName, string strCondition)", cmd.CommandText));
-                return -1;
             }
             return result;
         }
@@ -236,7 +237,6 @@ namespace CoreApp
         }
         private void AddRowToOutputParm(string name, object value)
         {
-
             DataRow dataRow = dtOutputParm.NewRow();
             dataRow["ParmName"] = name.Replace("@", "");
             dataRow["Value"] = value;
@@ -285,9 +285,7 @@ namespace CoreApp
                     {
                         cmd.Transaction = ObjTrans;
                     }
-
                     SqlParameter[] p = lstSQLParameter.ToArray();
-
                     if (ReturnIdentity)
                     {
                         cmd.CommandText = "INSERT INTO " + strTableName + "(" + strColumns + ") VALUES(" + strValues + "); SELECT SCOPE_IDENTITY()";
@@ -655,7 +653,7 @@ namespace CoreApp
                     if (OrderByclause != null)
                     {
                         OrderByclause = OrderByclause.Replace("order by", " ");
-                        cmd.CommandText = "SELECT * FROM " + strTableName + " WITH(NOLOCK) order by " + OrderByclause;
+                        cmd.CommandText = "SELECT * FROM " + strTableName + " WITH(NOLOCK) ORDER BY " + OrderByclause;
                     }
                     else
                     {
@@ -1002,13 +1000,6 @@ namespace CoreApp
             {
                 try
                 {
-                    //if (strQuery.ToLower().Contains("select") == false)
-                    //{
-                    //    clsUtility.ShowErrorMessage("Select keyword is missing in the ExecuteSelectStatemen()." +
-                    //                             "\nExecuteSelectStatemen() Executes the sql select statement and returns the data table." +
-                    //                             "\nDon't write INSERT, UPDATED query in this method.\n Query :" + strQuery, "CoreApp");
-                    //    return null;
-                    //}
                     if (Objcon.State == ConnectionState.Closed || Objcon.State == ConnectionState.Broken)
                     {
                         // if Connection object doest have the connection string then set the static connection string .
@@ -1122,7 +1113,7 @@ namespace CoreApp
                         cmd.Transaction = ObjTrans;
                     }
                     ObjDA = new SqlDataAdapter();
-                    cmd.CommandText = "select is_identity from sys.columns as c where c.is_identity=1 and object_id=(select object_id from sys.tables where name='" + TableName + "')";
+                    cmd.CommandText = "SELECT is_identity from sys.columns as c where c.is_identity=1 and object_id=(select object_id FROM sys.tables where name='" + TableName + "')";
                     _CommandText = cmd.CommandText;
                     ObjDA.SelectCommand = cmd;
                     ObjDA.Fill(dt);
@@ -1723,7 +1714,7 @@ namespace CoreApp
                 using (SqlCommand cmd = new SqlCommand())
                 {
                     cmd.Connection = Objcon;
-                    cmd.CommandText = "Create database " + dbName;
+                    cmd.CommandText = "CREATE DATABASE " + dbName;
                     _CommandText = cmd.CommandText;
                     int result = cmd.ExecuteNonQuery();
                     CloseConnection();
@@ -1733,7 +1724,7 @@ namespace CoreApp
             catch (Exception ex)
             {
                 CloseConnection();
-                clsCommon.ShowError(ex, SetError("CreateDatabase()", _CommandText));
+                clsCommon.ShowError(ex, SetError("CreateDatabase(string dbName)", _CommandText));
                 return false;
             }
         }
@@ -1747,7 +1738,7 @@ namespace CoreApp
             try
             {
                 dbName = dbName.Trim(c1);
-                int result = ExecuteScalarInt("SELECT count(1) FROM master.dbo.sysdatabases where name='" + dbName + "'");
+                int result = ExecuteScalarInt("SELECT COUNT(1) FROM master.dbo.sysdatabases WHERE name='" + dbName + "'");
                 if (result > 0)
                 {
                     return true;
@@ -1759,7 +1750,7 @@ namespace CoreApp
             }
             catch (Exception ex)
             {
-                clsCommon.ShowError(ex, SetError("IsDatabaseExist()", "SELECT * FROM master.dbo.sysdatabases where name='" + dbName + "'"));
+                clsCommon.ShowError(ex, SetError("IsDatabaseExist(string dbName)", "SELECT COUNT(1) FROM master.dbo.sysdatabases WHERE name='" + dbName + "'"));
                 return false;
             }
         }
@@ -1773,12 +1764,12 @@ namespace CoreApp
         {
             try
             {
-                int result = ExecuteNonQuery("ALTER DATABASE " + dbName + "  SET SINGLE_USER   WITH ROLLBACK IMMEDIATE DROP DATABASE " + dbName + "");
+                int result = ExecuteNonQuery("ALTER DATABASE " + dbName + "  SET SINGLE_USER  WITH ROLLBACK IMMEDIATE DROP DATABASE " + dbName + "");
                 return true;
             }
             catch (Exception ex)
             {
-                clsCommon.ShowError(ex, SetError("DeleteDatabase()", "SELECT * FROM master.dbo.sysdatabases where name='" + dbName + "'"));
+                clsCommon.ShowError(ex, SetError("DeleteDatabase(string dbName)", "ALTER DATABASE " + dbName + "  SET SINGLE_USER  WITH ROLLBACK IMMEDIATE DROP DATABASE " + dbName + ""));
                 return false;
             }
         }
