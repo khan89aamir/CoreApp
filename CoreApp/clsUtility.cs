@@ -147,7 +147,7 @@ namespace CoreApp
             }
             catch (Exception ex)
             {
-                clsCommon.ShowError(ex, " Method Name : GetImageBytes()");
+                clsCommon.ShowError(ex, " Method Name : GetImageBytes(Image Pic)");
             }
             return null;
         }
@@ -1882,7 +1882,7 @@ namespace CoreApp
         }
 
         /// <summary>
-        /// This method is checking whether Entered Form is open o not.
+        /// This method is checking whether Entered Form is open or not.
         /// </summary>
         /// <param name="formType">Enter name of Form. i.e typeof(Form Name)</param>
         /// <returns>Return True if Form is opened</returns>
@@ -1906,6 +1906,30 @@ namespace CoreApp
                 clsCommon.ShowError(ex.ToString(), "IsAlreadyOpen(Type formType)");
             }
             return isOpen;
+        }
+
+        /// <summary>
+        /// This method is checking whether Entered Form is open or not, if yes then close.
+        /// </summary>
+        /// <param name="formType">Enter name of Form. i.e typeof(Form Name)</param>
+        ///// <returns>Return True if Form is Closed</returns>
+        public void CloseAlreadyOpen(Type formType)
+        {
+            try
+            {
+                foreach (Form f in Application.OpenForms)
+                {
+                    if (f.GetType() == formType)
+                    {
+                        f.Close();
+                        return;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                clsCommon.ShowError(ex.ToString(), "CloseAlreadyOpen(Type formType)");
+            }
         }
     }
 }
