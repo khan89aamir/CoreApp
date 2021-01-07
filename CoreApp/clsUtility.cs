@@ -9,6 +9,7 @@ using System.Security.Cryptography;
 using System.Windows.Forms;
 using Microsoft.Win32;
 using System.Data.SqlClient;
+using ComponentFactory.Krypton.Toolkit;
 
 namespace CoreApp
 {
@@ -127,6 +128,9 @@ namespace CoreApp
         /// <summary>
         /// Initialize the new instance of clsUtility class. 
         /// </summary>
+        /// 
+
+        private DataGridView dgvDataPopup;
         public clsUtility()
         {
             c1[0] = '[';
@@ -835,6 +839,7 @@ namespace CoreApp
         }
 
         private Button ButtonNew, ButtonSave, ButtonEdit, ButtonUpdate, ButtonDelete, ButtonCancel;
+        private KryptonButton KrButtonNew, KrButtonSave, KrButtonEdit, KrButtonUpdate, KrButtonDelete, KrButtonCancel;
         private ToolStripButton ToolStripNew, ToolStripSave, ToolStripEdit, ToolStripUpdate, ToolStripDelete, ToolStripCancel;
 
         /// <summary>
@@ -854,6 +859,25 @@ namespace CoreApp
             this.ButtonUpdate = Update;
             this.ButtonDelete = Delete;
             this.ButtonCancel = Cancel;
+        }
+
+        /// <summary>
+        /// Register the command KryptonButton for enable/Disable status. This method will register the Button Control
+        /// </summary>
+        /// <param name="New">New Button</param>
+        /// <param name="Save">Save Button</param>
+        /// <param name="Edit">Edit Button</param>
+        /// <param name="Update"> Update Button</param>
+        /// <param name="Delete"> Delete Button</param>
+        /// <param name="Cancel"> Cancel Button</param>
+        public void RegisterCommandButtons(KryptonButton New, KryptonButton Save, KryptonButton Edit, KryptonButton Update, KryptonButton Delete, KryptonButton Cancel)
+        {
+            this.KrButtonNew = New;
+            this.KrButtonSave = Save;
+            this.KrButtonEdit = Edit;
+            this.KrButtonUpdate = Update;
+            this.KrButtonDelete = Delete;
+            this.KrButtonCancel = Cancel;
         }
 
         /// <summary>
@@ -1207,7 +1231,16 @@ namespace CoreApp
                         ButtonDelete.Enabled = false;
                         ButtonCancel.Enabled = false;
                     }
-                    if (ToolStripNew != null)
+                    else if (KrButtonNew != null)
+                    {
+                        KrButtonNew.Enabled = true;
+                        KrButtonSave.Enabled = false;
+                        KrButtonEdit.Enabled = false;
+                        KrButtonUpdate.Enabled = false;
+                        KrButtonDelete.Enabled = false;
+                        KrButtonCancel.Enabled = false;
+                    }
+                    else if (ToolStripNew != null)
                     {
                         ToolStripNew.Enabled = true;
                         ToolStripSave.Enabled = false;
@@ -1229,7 +1262,16 @@ namespace CoreApp
                         ButtonDelete.Enabled = false;
                         ButtonCancel.Enabled = false;
                     }
-                    if (ToolStripNew != null)
+                    else if (KrButtonNew != null)
+                    {
+                        KrButtonNew.Enabled = true;
+                        KrButtonSave.Enabled = false;
+                        KrButtonEdit.Enabled = false;
+                        KrButtonUpdate.Enabled = false;
+                        KrButtonDelete.Enabled = false;
+                        KrButtonCancel.Enabled = false;
+                    }
+                    else if (ToolStripNew != null)
                     {
                         ToolStripNew.Enabled = true;
                         ToolStripSave.Enabled = false;
@@ -1251,7 +1293,16 @@ namespace CoreApp
                         ButtonDelete.Enabled = false;
                         ButtonCancel.Enabled = true;
                     }
-                    if (ToolStripNew != null)
+                    else if (KrButtonNew != null)
+                    {
+                        KrButtonNew.Enabled = false;
+                        KrButtonSave.Enabled = false;
+                        KrButtonEdit.Enabled = false;
+                        KrButtonUpdate.Enabled = true;
+                        KrButtonDelete.Enabled = false;
+                        KrButtonCancel.Enabled = true;
+                    }
+                    else if (ToolStripNew != null)
                     {
                         ToolStripNew.Enabled = false;
                         ToolStripSave.Enabled = false;
@@ -1273,8 +1324,16 @@ namespace CoreApp
                         ButtonDelete.Enabled = true;
                         ButtonCancel.Enabled = true;
                     }
-
-                    if (ToolStripNew != null)
+                    else if (KrButtonNew != null)
+                    {
+                        KrButtonNew.Enabled = true;
+                        KrButtonSave.Enabled = false;
+                        KrButtonEdit.Enabled = true;
+                        KrButtonUpdate.Enabled = false;
+                        KrButtonDelete.Enabled = true;
+                        KrButtonCancel.Enabled = true;
+                    }
+                    else if (ToolStripNew != null)
                     {
                         ToolStripNew.Enabled = true;
                         ToolStripSave.Enabled = false;
@@ -1284,6 +1343,7 @@ namespace CoreApp
                         ToolStripCancel.Enabled = true;
                     }
                     break;
+
                 case clsCommon.ButtonStatus.AfterNew:
 
                     if (ButtonNew != null)
@@ -1295,8 +1355,16 @@ namespace CoreApp
                         ButtonDelete.Enabled = false;
                         ButtonCancel.Enabled = true;
                     }
-
-                    if (ToolStripNew != null)
+                    else if (KrButtonNew != null)
+                    {
+                        KrButtonNew.Enabled = false;
+                        KrButtonSave.Enabled = true;
+                        KrButtonEdit.Enabled = false;
+                        KrButtonUpdate.Enabled = false;
+                        KrButtonDelete.Enabled = false;
+                        KrButtonCancel.Enabled = true;
+                    }
+                    else if (ToolStripNew != null)
                     {
                         ToolStripNew.Enabled = false;
                         ToolStripSave.Enabled = true;
@@ -1318,8 +1386,16 @@ namespace CoreApp
                         ButtonDelete.Enabled = false;
                         ButtonCancel.Enabled = false;
                     }
-
-                    if (ToolStripNew != null)
+                    else if (KrButtonNew != null)
+                    {
+                        KrButtonNew.Enabled = true;
+                        KrButtonSave.Enabled = false;
+                        KrButtonEdit.Enabled = false;
+                        KrButtonUpdate.Enabled = false;
+                        KrButtonDelete.Enabled = false;
+                        KrButtonCancel.Enabled = false;
+                    }
+                    else if (ToolStripNew != null)
                     {
                         ToolStripNew.Enabled = true;
                         ToolStripSave.Enabled = false;
@@ -1341,7 +1417,16 @@ namespace CoreApp
                         ButtonDelete.Enabled = false;
                         ButtonCancel.Enabled = false;
                     }
-                    if (ToolStripNew != null)
+                    else if (KrButtonNew != null)
+                    {
+                        KrButtonNew.Enabled = true;
+                        KrButtonSave.Enabled = false;
+                        KrButtonEdit.Enabled = false;
+                        KrButtonUpdate.Enabled = false;
+                        KrButtonDelete.Enabled = false;
+                        KrButtonCancel.Enabled = false;
+                    }
+                    else if (ToolStripNew != null)
                     {
                         ToolStripNew.Enabled = true;
                         ToolStripSave.Enabled = false;
@@ -1362,7 +1447,16 @@ namespace CoreApp
                         ButtonDelete.Enabled = false;
                         ButtonCancel.Enabled = false;
                     }
-                    if (ToolStripNew != null)
+                    else if (KrButtonNew != null)
+                    {
+                        KrButtonNew.Enabled = true;
+                        KrButtonSave.Enabled = false;
+                        KrButtonEdit.Enabled = false;
+                        KrButtonUpdate.Enabled = false;
+                        KrButtonDelete.Enabled = false;
+                        KrButtonCancel.Enabled = false;
+                    }
+                    else if (ToolStripNew != null)
                     {
                         ToolStripNew.Enabled = true;
                         ToolStripSave.Enabled = false;
@@ -1375,7 +1469,7 @@ namespace CoreApp
             }
         }
 
-        private DataGridView dgvDataPopup;
+        
 
         private void SetDataPopup(DataGridView dgv)
         {
