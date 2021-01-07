@@ -929,7 +929,28 @@ namespace CoreApp
                             ButtonCancel.Enabled = false;
                         }
                     }
-                    if (ToolStripNew != null)
+                    else if (KrButtonNew != null)
+                    {
+                        if (IsAdmin)
+                        {
+                            KrButtonNew.Enabled = true;
+                            KrButtonSave.Enabled = false;
+                            KrButtonEdit.Enabled = false;
+                            KrButtonUpdate.Enabled = false;
+                            KrButtonDelete.Enabled = false;
+                            KrButtonCancel.Enabled = false;
+                        }
+                        else
+                        {
+                            KrButtonNew.Enabled = false;
+                            KrButtonSave.Enabled = false;
+                            KrButtonEdit.Enabled = false;
+                            KrButtonUpdate.Enabled = false;
+                            KrButtonDelete.Enabled = false;
+                            KrButtonCancel.Enabled = false;
+                        }
+                    }
+                    else if (ToolStripNew != null)
                     {
                         if (IsAdmin)
                         {
@@ -956,7 +977,19 @@ namespace CoreApp
                             ButtonCancel.Enabled = false;
                         }
                     }
-                    if (ToolStripNew != null)
+                    else if (KrButtonNew != null)
+                    {
+                        if (IsAdmin)
+                        {
+                            KrButtonNew.Enabled = true;
+                            KrButtonSave.Enabled = false;
+                            KrButtonEdit.Enabled = false;
+                            KrButtonUpdate.Enabled = false;
+                            KrButtonDelete.Enabled = false;
+                            KrButtonCancel.Enabled = false;
+                        }
+                    }
+                    else if (ToolStripNew != null)
                     {
                         if (IsAdmin)
                         {
@@ -993,7 +1026,28 @@ namespace CoreApp
                             ButtonCancel.Enabled = true;
                         }
                     }
-                    if (ToolStripNew != null)
+                    else if (KrButtonNew != null)
+                    {
+                        if (IsAdmin)
+                        {
+                            KrButtonNew.Enabled = false;
+                            KrButtonSave.Enabled = false;
+                            KrButtonEdit.Enabled = false;
+                            KrButtonUpdate.Enabled = true;
+                            KrButtonDelete.Enabled = false;
+                            KrButtonCancel.Enabled = true;
+                        }
+                        else
+                        {
+                            KrButtonNew.Enabled = false;
+                            KrButtonSave.Enabled = false;
+                            KrButtonEdit.Enabled = false;
+                            KrButtonUpdate.Enabled = true;
+                            KrButtonDelete.Enabled = false;
+                            KrButtonCancel.Enabled = true;
+                        }
+                    }
+                    else if (ToolStripNew != null)
                     {
                         if (IsAdmin)
                         {
@@ -1039,8 +1093,28 @@ namespace CoreApp
                             ButtonCancel.Enabled = true;
                         }
                     }
-
-                    if (ToolStripNew != null)
+                    else if (KrButtonNew != null)
+                    {
+                        if (IsAdmin)
+                        {
+                            KrButtonNew.Enabled = true;
+                            KrButtonSave.Enabled = false;
+                            KrButtonEdit.Enabled = true;
+                            KrButtonUpdate.Enabled = false;
+                            KrButtonDelete.Enabled = true;
+                            KrButtonCancel.Enabled = true;
+                        }
+                        else
+                        {
+                            KrButtonNew.Enabled = false;
+                            KrButtonSave.Enabled = false;
+                            KrButtonEdit.Enabled = true;
+                            KrButtonUpdate.Enabled = false;
+                            KrButtonDelete.Enabled = false;
+                            KrButtonCancel.Enabled = true;
+                        }
+                    }
+                    else if (ToolStripNew != null)
                     {
                         if (IsAdmin)
                         {
@@ -1076,8 +1150,19 @@ namespace CoreApp
                             ButtonCancel.Enabled = true;
                         }
                     }
-
-                    if (ToolStripNew != null)
+                    else if (KrButtonNew != null)
+                    {
+                        if (IsAdmin)
+                        {
+                            KrButtonNew.Enabled = false;
+                            KrButtonSave.Enabled = true;
+                            KrButtonEdit.Enabled = false;
+                            KrButtonUpdate.Enabled = false;
+                            KrButtonDelete.Enabled = false;
+                            KrButtonCancel.Enabled = true;
+                        }
+                    }
+                    else if (ToolStripNew != null)
                     {
                         if (IsAdmin)
                         {
@@ -1105,8 +1190,19 @@ namespace CoreApp
                             ButtonCancel.Enabled = false;
                         }
                     }
-
-                    if (ToolStripNew != null)
+                    else if (KrButtonNew != null)
+                    {
+                        if (IsAdmin)
+                        {
+                            KrButtonNew.Enabled = true;
+                            KrButtonSave.Enabled = false;
+                            KrButtonEdit.Enabled = false;
+                            KrButtonUpdate.Enabled = false;
+                            KrButtonDelete.Enabled = false;
+                            KrButtonCancel.Enabled = false;
+                        }
+                    }
+                    else if (ToolStripNew != null)
                     {
                         if (IsAdmin)
                         {
@@ -1143,7 +1239,28 @@ namespace CoreApp
                             ButtonCancel.Enabled = false;
                         }
                     }
-                    if (ToolStripNew != null)
+                    else if (KrButtonNew != null)
+                    {
+                        if (IsAdmin)
+                        {
+                            KrButtonNew.Enabled = true;
+                            KrButtonSave.Enabled = false;
+                            KrButtonEdit.Enabled = false;
+                            KrButtonUpdate.Enabled = false;
+                            KrButtonDelete.Enabled = false;
+                            KrButtonCancel.Enabled = false;
+                        }
+                        else
+                        {
+                            KrButtonNew.Enabled = false;
+                            KrButtonSave.Enabled = false;
+                            KrButtonEdit.Enabled = false;
+                            KrButtonUpdate.Enabled = false;
+                            KrButtonDelete.Enabled = false;
+                            KrButtonCancel.Enabled = false;
+                        }
+                    }
+                    else if (ToolStripNew != null)
                     {
                         if (IsAdmin)
                         {
@@ -1188,7 +1305,28 @@ namespace CoreApp
                             ButtonCancel.Enabled = false;
                         }
                     }
-                    if (ToolStripNew != null)
+                    else if (KrButtonNew != null)
+                    {
+                        if (IsAdmin)
+                        {
+                            KrButtonNew.Enabled = true;
+                            KrButtonSave.Enabled = false;
+                            KrButtonEdit.Enabled = false;
+                            KrButtonUpdate.Enabled = false;
+                            KrButtonDelete.Enabled = false;
+                            KrButtonCancel.Enabled = false;
+                        }
+                        else
+                        {
+                            KrButtonNew.Enabled = false;
+                            KrButtonSave.Enabled = false;
+                            KrButtonEdit.Enabled = false;
+                            KrButtonUpdate.Enabled = false;
+                            KrButtonDelete.Enabled = false;
+                            KrButtonCancel.Enabled = false;
+                        }
+                    }
+                    else if (ToolStripNew != null)
                     {
                         if (IsAdmin)
                         {
