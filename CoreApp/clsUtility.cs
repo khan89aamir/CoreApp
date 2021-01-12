@@ -623,6 +623,17 @@ namespace CoreApp
                     return false;
                 }
             }
+            else if (c.GetType() == typeof(KryptonTextBox))
+            {
+                if (((KryptonTextBox)c).Text.Trim().Length == 0)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
             else if (c.GetType() == typeof(RichTextBox))
             {
                 if (((RichTextBox)c).Text.Trim().Length == 0)
@@ -634,9 +645,31 @@ namespace CoreApp
                     return false;
                 }
             }
+            else if (c.GetType() == typeof(KryptonRichTextBox))
+            {
+                if (((KryptonRichTextBox)c).Text.Trim().Length == 0)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
             else if (c.GetType() == typeof(ComboBox))
             {
                 if (((ComboBox)c).Text.Trim().Length == 0)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else if (c.GetType() == typeof(KryptonComboBox))
+            {
+                if (((KryptonComboBox)c).Text.Trim().Length == 0)
                 {
                     return true;
                 }
@@ -700,17 +733,32 @@ namespace CoreApp
             bool b = false;
             try
             {
-                TextBox txt = (TextBox)c;
-                if (((e.KeyChar < 48 || e.KeyChar > 57) && e.KeyChar != 8 && e.KeyChar != 46))
+                if (c.GetType() == typeof(TextBox))
                 {
-                    b = true;
-                }
-                if (e.KeyChar == 46)
-                {
-                    if (txt.Text.IndexOf(e.KeyChar) != -1 || txt.SelectionStart == 0)
+                    TextBox txt = (TextBox)c;
+                    if (((e.KeyChar < 48 || e.KeyChar > 57) && e.KeyChar != 8 && e.KeyChar != 46))
+                    {
                         b = true;
+                    }
+                    if (e.KeyChar == 46)
+                    {
+                        if (txt.Text.IndexOf(e.KeyChar) != -1 || txt.SelectionStart == 0)
+                            b = true;
+                    }
                 }
-
+                else if (c.GetType() == typeof(KryptonTextBox))
+                {
+                    KryptonTextBox txt = (KryptonTextBox)c;
+                    if (((e.KeyChar < 48 || e.KeyChar > 57) && e.KeyChar != 8 && e.KeyChar != 46))
+                    {
+                        b = true;
+                    }
+                    if (e.KeyChar == 46)
+                    {
+                        if (txt.Text.IndexOf(e.KeyChar) != -1 || txt.SelectionStart == 0)
+                            b = true;
+                    }
+                }
                 //if (e.KeyChar >= 48 && e.KeyChar <= 57 || e.KeyChar == 8 || e.KeyChar == 46)
                 //{
                 //    if (txt.SelectionStart == 0 && e.KeyChar != 46 && !txt.Text.Contains("."))
@@ -1607,7 +1655,7 @@ namespace CoreApp
             }
         }
 
-        
+
 
         private void SetDataPopup(DataGridView dgv)
         {
