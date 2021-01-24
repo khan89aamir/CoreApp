@@ -90,6 +90,12 @@ namespace CoreApp
 
         #endregion
 
+        public enum MessageType
+        {
+            Office2010Blue,
+            SparklePurple
+        }
+
         internal static Dictionary<string, Control> ObjPopupControl = new Dictionary<string, Control>();
         clsCommon ObjCommon = new clsCommon();
         //clsConnection_DAL ObjDAL = new clsConnection_DAL(true); stack overflow error has occured if uncomment the line
@@ -136,6 +142,7 @@ namespace CoreApp
             c1[0] = '[';
             c1[1] = ']';
         }
+
         /// <summary>
         /// Get the image in byte array format.
         /// </summary>
@@ -793,7 +800,7 @@ namespace CoreApp
         {
             try
             {
-                if (e.KeyChar >= 65 && e.KeyChar <= 90 || e.KeyChar >= 97 && e.KeyChar <= 122 || e.KeyChar == 8 || e.KeyChar == 32)
+                if (e.KeyChar >= 65 && e.KeyChar <= 90 || e.KeyChar >= 97 && e.KeyChar <= 122 || e.KeyChar == 8 || e.KeyChar == 32 || e.KeyChar == 13)
                 {
                     return false;
                 }
