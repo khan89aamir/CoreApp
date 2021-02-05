@@ -92,9 +92,12 @@ namespace CoreApp
 
         public enum MessageType
         {
+            Office2007Blue,
             Office2010Blue,
             SparklePurple
         }
+        public static MessageType _UserMessageType;
+
 
         internal static Dictionary<string, Control> ObjPopupControl = new Dictionary<string, Control>();
         clsCommon ObjCommon = new clsCommon();
@@ -549,7 +552,19 @@ namespace CoreApp
         /// <param name="Title">Title of the message.</param>
         public static void ShowInfoMessage(string strMessage, string Title)
         {
-            MessageBox.Show(strMessage, Title, MessageBoxButtons.OK, MessageBoxIcon.Information);
+            KryptonManager kr = new KryptonManager();
+            if (MessageType.SparklePurple == _UserMessageType)
+                kr.GlobalPaletteMode = PaletteModeManager.SparklePurple;
+
+            else if (MessageType.Office2007Blue == _UserMessageType)
+                kr.GlobalPaletteMode = PaletteModeManager.Office2007Blue;
+
+            else
+                kr.GlobalPaletteMode = PaletteModeManager.Office2010Blue;
+
+            //MessageBox.Show(strMessage, Title, MessageBoxButtons.OK, MessageBoxIcon.Information);
+            KryptonMessageBox.Show(strMessage, Title, MessageBoxButtons.OK, MessageBoxIcon.Information);
+            kr.ResetGlobalPaletteMode();
         }
 
         /// <summary>
@@ -558,7 +573,19 @@ namespace CoreApp
         /// <param name="strMessage">Message text.</param>
         public static void ShowInfoMessage(string strMessage)
         {
-            MessageBox.Show(strMessage, strProjectTitle, MessageBoxButtons.OK, MessageBoxIcon.Information);
+            KryptonManager kr = new KryptonManager();
+            if (MessageType.SparklePurple == _UserMessageType)
+                kr.GlobalPaletteMode = PaletteModeManager.SparklePurple;
+
+            else if (MessageType.Office2007Blue == _UserMessageType)
+                kr.GlobalPaletteMode = PaletteModeManager.Office2007Blue;
+
+            else
+                kr.GlobalPaletteMode = PaletteModeManager.Office2010Blue;
+
+            //MessageBox.Show(strMessage, strProjectTitle, MessageBoxButtons.OK, MessageBoxIcon.Information);
+            KryptonMessageBox.Show(strMessage, strProjectTitle, MessageBoxButtons.OK, MessageBoxIcon.Information);
+            kr.ResetGlobalPaletteMode();
         }
 
         /// <summary>
@@ -568,7 +595,20 @@ namespace CoreApp
         /// <param name="Title">Title of the message.</param>
         public static void ShowErrorMessage(string strMessage, string Title)
         {
-            MessageBox.Show(strMessage, Title, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            KryptonManager kr = new KryptonManager();
+            if (MessageType.SparklePurple == _UserMessageType)
+                kr.GlobalPaletteMode = PaletteModeManager.SparklePurple;
+
+            else if (MessageType.Office2007Blue == _UserMessageType)
+                kr.GlobalPaletteMode = PaletteModeManager.Office2007Blue;
+
+            else
+                kr.GlobalPaletteMode = PaletteModeManager.Office2010Blue;
+
+            //MessageBox.Show(strMessage, Title, MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+            KryptonMessageBox.Show(strMessage, Title, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            kr.ResetGlobalPaletteMode();
         }
 
         /// <summary>
@@ -577,7 +617,20 @@ namespace CoreApp
         /// <param name="strMessage">Message text</param>
         public static void ShowErrorMessage(string strMessage)
         {
-            MessageBox.Show(strMessage, strProjectTitle, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            KryptonManager kr = new KryptonManager();
+            if (MessageType.SparklePurple == _UserMessageType)
+                kr.GlobalPaletteMode = PaletteModeManager.SparklePurple;
+
+            else if (MessageType.Office2007Blue == _UserMessageType)
+                kr.GlobalPaletteMode = PaletteModeManager.Office2007Blue;
+
+            else
+                kr.GlobalPaletteMode = PaletteModeManager.Office2010Blue;
+
+            //MessageBox.Show(strMessage, strProjectTitle, MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+            KryptonMessageBox.Show(strMessage, strProjectTitle, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            kr.ResetGlobalPaletteMode();
         }
 
         /// <summary>
@@ -588,11 +641,25 @@ namespace CoreApp
         /// <returns>If user press Yes it will return True else False.</returns>
         public static bool ShowQuestionMessage(string strMessage, string Title)
         {
-            DialogResult d = MessageBox.Show(strMessage, Title, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            KryptonManager kr = new KryptonManager();
+            if (MessageType.SparklePurple == _UserMessageType)
+                kr.GlobalPaletteMode = PaletteModeManager.SparklePurple;
+
+            else if (MessageType.Office2007Blue == _UserMessageType)
+                kr.GlobalPaletteMode = PaletteModeManager.Office2007Blue;
+
+            else
+                kr.GlobalPaletteMode = PaletteModeManager.Office2010Blue;
+
+            //DialogResult d = MessageBox.Show(strMessage, Title, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            DialogResult d = KryptonMessageBox.Show(strMessage, Title, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            kr.ResetGlobalPaletteMode();
             if (d == DialogResult.Yes)
             {
+                //kr.ResetGlobalPaletteMode();
                 return true;
             }
+            //kr.ResetGlobalPaletteMode();
             return false;
         }
 
@@ -603,11 +670,25 @@ namespace CoreApp
         /// <returns>If user press Yes it will return True else False.</returns>
         public static bool ShowQuestionMessage(string strMessage)
         {
-            DialogResult d = MessageBox.Show(strMessage, strProjectTitle, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            KryptonManager kr = new KryptonManager();
+            if (MessageType.SparklePurple == _UserMessageType)
+                kr.GlobalPaletteMode = PaletteModeManager.SparklePurple;
+
+            else if (MessageType.Office2007Blue == _UserMessageType)
+                kr.GlobalPaletteMode = PaletteModeManager.Office2007Blue;
+
+            else
+                kr.GlobalPaletteMode = PaletteModeManager.Office2010Blue;
+
+            //DialogResult d = MessageBox.Show(strMessage, strProjectTitle, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            DialogResult d = KryptonMessageBox.Show(strMessage, strProjectTitle, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            kr.ResetGlobalPaletteMode();
             if (d == DialogResult.Yes)
             {
+                //kr.ResetGlobalPaletteMode();
                 return true;
             }
+            //kr.ResetGlobalPaletteMode();
             return false;
         }
 
@@ -714,7 +795,7 @@ namespace CoreApp
         {
             try
             {
-                if (e.KeyChar >= 48 && e.KeyChar <= 57 || e.KeyChar == 8)
+                if (e.KeyChar >= 48 && e.KeyChar <= 57 || (e.KeyChar == 8 || e.KeyChar == 13))
                 {
                     return false;
                 }
@@ -743,7 +824,7 @@ namespace CoreApp
                 if (c.GetType() == typeof(TextBox))
                 {
                     TextBox txt = (TextBox)c;
-                    if (((e.KeyChar < 48 || e.KeyChar > 57) && e.KeyChar != 8 && e.KeyChar != 46))
+                    if (((e.KeyChar < 48 || e.KeyChar > 57) && e.KeyChar != 8 && e.KeyChar != 46 && e.KeyChar != 13))
                     {
                         b = true;
                     }
@@ -756,7 +837,7 @@ namespace CoreApp
                 else if (c.GetType() == typeof(KryptonTextBox))
                 {
                     KryptonTextBox txt = (KryptonTextBox)c;
-                    if (((e.KeyChar < 48 || e.KeyChar > 57) && e.KeyChar != 8 && e.KeyChar != 46))
+                    if (((e.KeyChar < 48 || e.KeyChar > 57) && e.KeyChar != 8 && e.KeyChar != 46 && e.KeyChar != 13))
                     {
                         b = true;
                     }
