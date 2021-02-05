@@ -672,6 +672,7 @@ namespace CoreApp
         {
             KryptonManager kr = new KryptonManager();
             if (MessageType.SparklePurple == _UserMessageType)
+
                 kr.GlobalPaletteMode = PaletteModeManager.SparklePurple;
 
             else if (MessageType.Office2007Blue == _UserMessageType)

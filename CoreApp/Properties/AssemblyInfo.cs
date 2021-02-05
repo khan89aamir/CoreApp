@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("CoreApp")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Khan Soft")]
+[assembly: AssemblyCompany("Atech++")]
 [assembly: AssemblyProduct("CoreApp")]
-[assembly: AssemblyCopyright("Copyright © Khan Soft 2021")]
+[assembly: AssemblyCopyright("Copyright © Atech++ 2021")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
