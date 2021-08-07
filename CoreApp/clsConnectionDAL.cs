@@ -21,7 +21,7 @@ namespace CoreApp
         string _CommandText;
         bool IsRollBack = false;
         int Counter = 0;
-        int pTimeout = 1000;
+        int pTimeout = 2000;
         string strColumns;
         string strValues;
         // List for storing sql parameter.
