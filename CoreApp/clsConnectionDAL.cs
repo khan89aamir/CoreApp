@@ -21,6 +21,7 @@ namespace CoreApp
         string _CommandText;
         bool IsRollBack = false;
         int Counter = 0;
+        int pTimeout = 1000;
         string strColumns;
         string strValues;
         // List for storing sql parameter.
@@ -1019,6 +1020,7 @@ namespace CoreApp
                     }
                     ObjDA = new SqlDataAdapter();
                     cmd.CommandText = strQuery;
+                    cmd.CommandTimeout = pTimeout;
                     _CommandText = cmd.CommandText;
                     ObjDA.SelectCommand = cmd;
                     ObjDA.Fill(dt);
@@ -1175,6 +1177,7 @@ namespace CoreApp
                     }
                     ObjDA = new SqlDataAdapter();
                     cmd.CommandText = strQuery;
+                    cmd.CommandTimeout = pTimeout;
                     _CommandText = cmd.CommandText;
                     ObjDA.SelectCommand = cmd;
                     ObjDA.Fill(dt);
@@ -1226,6 +1229,7 @@ namespace CoreApp
                     }
                     cmd.CommandText = strQuery;
                     cmd.Connection = Objcon;
+                    cmd.CommandTimeout = pTimeout;
                     _CommandText = cmd.CommandText;
                     result = cmd.ExecuteNonQuery();
                     CloseConnection();
@@ -1287,6 +1291,7 @@ namespace CoreApp
                     }
                     cmd.CommandText = strQuery;
                     cmd.Connection = Objcon;
+                    cmd.CommandTimeout = pTimeout;
                     _CommandText = cmd.CommandText;
                     result = cmd.ExecuteScalar();
                     CloseConnection();
@@ -1346,6 +1351,7 @@ namespace CoreApp
                     cmd.CommandText = strQuery;
                     _CommandText = cmd.CommandText;
                     cmd.Connection = Objcon;
+                    cmd.CommandTimeout = pTimeout;
                     o = cmd.ExecuteScalar();
                     if (o != null)
                     {
@@ -2015,7 +2021,7 @@ namespace CoreApp
                     cmd.CommandText = strStoreProcedureName;
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Connection = Objcon;
-
+                    cmd.CommandTimeout = pTimeout;
                     // if sp is called with parameters.
                     if (lstSQLParameter.Count > 0)
                     {
@@ -2095,7 +2101,7 @@ namespace CoreApp
                     cmd.CommandText = strStoreProcedureName;
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Connection = Objcon;
-
+                    cmd.CommandTimeout = pTimeout;
                     // if sp is called with parameters.
                     if (lstSQLParameter.Count > 0)
                     {
