@@ -74,7 +74,8 @@ namespace CoreApp
             {
                 IsMail = false;
                 clsUtility ObjUtil = new clsUtility();
-                ObjUtil.WriteToFile("Error Occured " + ex.ToString(), "Error");
+                string temp = "From: " + From + " To: " + To + " Sub: " + Sub + " Body: " + Body + " ";
+                ObjUtil.WriteToFile("Error Occured " + temp + ex.ToString(), "Error");
                 //return false;
             }
         }

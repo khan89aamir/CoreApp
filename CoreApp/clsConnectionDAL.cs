@@ -176,6 +176,7 @@ namespace CoreApp
             int result = 0;
             using (SqlCommand cmd = new SqlCommand())
             {
+                string strQuery = string.Empty;
                 try
                 {
                     if (Objcon.State == ConnectionState.Closed || Objcon.State == ConnectionState.Broken)
@@ -202,8 +203,8 @@ namespace CoreApp
                     {
                         strCondition = strCondition.Replace("Where", " ");
                     }
-
-                    cmd.CommandText = "DELETE " + strTableName + " WHERE " + strCondition;
+                    strQuery = "DELETE " + strTableName + " WHERE " + strCondition;
+                    cmd.CommandText = strQuery;
                     _CommandText = cmd.CommandText;
                     result = cmd.ExecuteNonQuery();
 
@@ -217,6 +218,11 @@ namespace CoreApp
                         ObjTrans.Rollback();
                     }
                     CloseConnection();
+                    if (clsUtility.IsAutoLog)
+                    {
+                        string temp = "DeleteData strTableName: " + strTableName + " Query: " + strQuery + " ";
+                        ObjUtil.WriteToFile(temp + ex.ToString(), "Error");
+                    }
                     clsCommon.ShowError(ex, SetError("DeleteData(string strTableName, string strCondition)", cmd.CommandText));
                     return -1;
                 }
@@ -269,6 +275,7 @@ namespace CoreApp
             int result = 0;
             using (SqlCommand cmd = new SqlCommand())
             {
+                string strQuery = string.Empty;
                 try
                 {
                     if (Objcon.State == ConnectionState.Closed || Objcon.State == ConnectionState.Broken)
@@ -289,11 +296,13 @@ namespace CoreApp
                     SqlParameter[] p = lstSQLParameter.ToArray();
                     if (ReturnIdentity)
                     {
-                        cmd.CommandText = "INSERT INTO " + strTableName + "(" + strColumns + ") VALUES(" + strValues + "); SELECT SCOPE_IDENTITY()";
+                        strQuery = "INSERT INTO " + strTableName + "(" + strColumns + ") VALUES(" + strValues + "); SELECT SCOPE_IDENTITY()";
+                        cmd.CommandText = strQuery;
                     }
                     else
                     {
-                        cmd.CommandText = "INSERT INTO " + strTableName + "(" + strColumns + ") VALUES(" + strValues + ")";
+                        strQuery = "INSERT INTO " + strTableName + "(" + strColumns + ") VALUES(" + strValues + ")";
+                        cmd.CommandText = strQuery;
                     }
                     _CommandText = cmd.CommandText;
                     cmd.Parameters.AddRange(p);
@@ -319,6 +328,11 @@ namespace CoreApp
                     }
                     string strMethod = System.Reflection.MethodBase.GetCurrentMethod().Name;
                     CloseConnection();
+                    if (clsUtility.IsAutoLog)
+                    {
+                        string temp = "InsertData strTableName: " + strTableName + " Query: " + strQuery + " ";
+                        ObjUtil.WriteToFile(temp + ex.ToString(), "Error");
+                    }
                     clsCommon.ShowError(ex, SetError("InsertData(string strTableName, bool ReturnIdentity)", cmd.CommandText));
                     ResetData();
                     return -1;
@@ -348,6 +362,7 @@ namespace CoreApp
             int result = 0;
             using (SqlCommand cmd = new SqlCommand())
             {
+                string strQuery = string.Empty;
                 try
                 {
                     if (Objcon.State == ConnectionState.Closed || Objcon.State == ConnectionState.Broken)
@@ -368,7 +383,8 @@ namespace CoreApp
                     SqlParameter[] p = lstSQLParameter.ToArray();
 
                     strCondition = strCondition.Replace("where", " ");
-                    cmd.CommandText = "UPDATE " + strTableName + " SET " + strColumns + " WHERE " + strCondition;
+                    strQuery = "UPDATE " + strTableName + " SET " + strColumns + " WHERE " + strCondition; ;
+                    cmd.CommandText = strQuery;
                     _CommandText = cmd.CommandText;
                     cmd.Parameters.AddRange(p);
                     cmd.Connection = Objcon;
@@ -383,6 +399,11 @@ namespace CoreApp
                         ObjTrans.Rollback();
                     }
                     CloseConnection();
+                    if (clsUtility.IsAutoLog)
+                    {
+                        string temp = "UpdateData strTableName: " + strTableName + " strCondition: " + strCondition + " Query: " + strQuery + " ";
+                        ObjUtil.WriteToFile(temp + ex.ToString(), "Error");
+                    }
                     clsCommon.ShowError(ex, SetError("UpdateData(string strTableName, string strCondition)", cmd.CommandText));
                     ResetData();
                     return -1;
@@ -513,6 +534,11 @@ namespace CoreApp
             }
             catch (Exception ex)
             {
+                if (clsUtility.IsAutoLog)
+                {
+                    string temp = "SetColumnData strColumnnName: " + strColumnnName + " Value: " + Value + " strColumns: " + strColumns + " strValues: " + strValues + " ";
+                    ObjUtil.WriteToFile(temp + ex.ToString(), "Error");
+                }
                 clsCommon.ShowError(ex, "SetColumnData(string strColumnnName, SqlDbType DataType, object Value)");
                 ResetData();
                 return false;
@@ -550,6 +576,11 @@ namespace CoreApp
             }
             catch (Exception ex)
             {
+                if (clsUtility.IsAutoLog)
+                {
+                    string temp = "UpdateColumnData strColumnnName: " + strColumnnName + " Value: " + Value + " strColumns: " + strColumns + " strValues: " + strValues + " ";
+                    ObjUtil.WriteToFile(temp + ex.ToString(), "Error");
+                }
                 clsCommon.ShowError(ex, "UpdateColumnData(string strColumnnName, SqlDbType DataType, object Value)");
                 ResetData();
                 return false;
@@ -606,6 +637,11 @@ namespace CoreApp
                 catch (Exception ex)
                 {
                     CloseConnection();
+                    if (clsUtility.IsAutoLog)
+                    {
+                        string temp = "GetData strTableName: " + strTableName + " ";
+                        ObjUtil.WriteToFile(temp + ex.ToString(), "Error");
+                    }
                     clsCommon.ShowError(ex, SetError("GetData(string strTableName)", cmd.CommandText));
                 }
             }
@@ -674,6 +710,11 @@ namespace CoreApp
                 catch (Exception ex)
                 {
                     CloseConnection();
+                    if (clsUtility.IsAutoLog)
+                    {
+                        string temp = "GetData strTableName: " + strTableName + " OrderByclause: " + OrderByclause + " Query: " + cmd.CommandText + " ";
+                        ObjUtil.WriteToFile(temp + ex.ToString(), "Error");
+                    }
                     clsCommon.ShowError(ex, SetError("GetData(string strTableName, string OrderByclause)", cmd.CommandText));
                 }
             }
@@ -751,6 +792,11 @@ namespace CoreApp
                 catch (Exception ex)
                 {
                     CloseConnection();
+                    if (clsUtility.IsAutoLog)
+                    {
+                        string temp = "GetData strTableName: " + strTableName + " strCondition: " + strCondition + " Query: " + cmd.CommandText + " ";
+                        ObjUtil.WriteToFile(temp + ex.ToString(), "Error");
+                    }
                     clsCommon.ShowError(ex, SetError("GetData(string strTableName, string strCondition, string OrderByclause)", cmd.CommandText));
                 }
             }
@@ -820,6 +866,11 @@ namespace CoreApp
                 catch (Exception ex)
                 {
                     CloseConnection();
+                    if (clsUtility.IsAutoLog)
+                    {
+                        string temp = "GetDataCol strTableName: " + strTableName + " strColumns: " + strColumns + " Query: " + cmd.CommandText + " ";
+                        ObjUtil.WriteToFile(temp + ex.ToString(), "Error");
+                    }
                     clsCommon.ShowError(ex, SetError("GetDataCol(string strTableName, string strColumns, string OrderByclause)", cmd.CommandText));
                 }
             }
@@ -897,6 +948,11 @@ namespace CoreApp
                 catch (Exception ex)
                 {
                     CloseConnection();
+                    if (clsUtility.IsAutoLog)
+                    {
+                        string temp = "GetDataCol strTableName: " + strTableName + " strColumns: " + strColumns + " Query: " + cmd.CommandText + " ";
+                        ObjUtil.WriteToFile(temp + ex.ToString(), "Error");
+                    }
                     clsCommon.ShowError(ex, SetError("GetDataCol(string strTableName, string strColumns, string strCondition, string OrderByclause)", cmd.CommandText));
                 }
             }
@@ -1030,6 +1086,11 @@ namespace CoreApp
                 catch (Exception ex)
                 {
                     CloseConnection();
+                    if (clsUtility.IsAutoLog)
+                    {
+                        string temp = "ExecuteSelectStatement strQuery: " + strQuery + " ";
+                        ObjUtil.WriteToFile(temp + ex.ToString(), "Error");
+                    }
                     clsCommon.ShowError(ex, SetError("ExecuteSelectStatement(string strQuery)", cmd.CommandText));
                 }
             }
@@ -1187,6 +1248,11 @@ namespace CoreApp
                 catch (Exception ex)
                 {
                     CloseConnection();
+                    if (clsUtility.IsAutoLog)
+                    {
+                        string temp = "ExecuteSelectStatement strQuery: " + strQuery + " ";
+                        ObjUtil.WriteToFile(temp + ex.ToString(), "Error");
+                    }
                     clsCommon.ShowError(ex, SetError("ExecuteSelectStatement(string strQuery)", cmd.CommandText));
                 }
             }
@@ -1248,6 +1314,11 @@ namespace CoreApp
                         ObjTrans.Rollback();
                     }
                     CloseConnection();
+                    if (clsUtility.IsAutoLog)
+                    {
+                        string temp = "ExecuteNonQuery strQuery: " + strQuery + " ";
+                        ObjUtil.WriteToFile(temp + ex.ToString(), "Error");
+                    }
                     clsCommon.ShowError(ex, SetError("ExecuteNonQuery(string strQuery)", cmd.CommandText));
                     return -1;
                 }
@@ -1305,6 +1376,11 @@ namespace CoreApp
                         ObjTrans.Rollback();
                     }
                     CloseConnection();
+                    if (clsUtility.IsAutoLog)
+                    {
+                        string temp = "ExecuteScalar strQuery: " + strQuery + " ";
+                        ObjUtil.WriteToFile(temp + ex.ToString(), "Error");
+                    }
                     clsCommon.ShowError(ex, SetError("ExecuteScalar(string strQuery)", cmd.CommandText));
                 }
             }
@@ -1372,6 +1448,11 @@ namespace CoreApp
                         ObjTrans.Rollback();
                     }
                     CloseConnection();
+                    if (clsUtility.IsAutoLog)
+                    {
+                        string temp = "ExecuteScalarInt strQuery: " + strQuery + " ";
+                        ObjUtil.WriteToFile(temp + ex.ToString(), "Error");
+                    }
                     clsCommon.ShowError(ex, SetError("ExecuteScalarInt(string strQuery)", cmd.CommandText));
                 }
             }
@@ -1428,6 +1509,11 @@ namespace CoreApp
                 catch (Exception ex)
                 {
                     CloseConnection();
+                    if (clsUtility.IsAutoLog)
+                    {
+                        string temp = "CountRecords strTableName: " + strTableName + " Query: " + cmd.CommandText + " ";
+                        ObjUtil.WriteToFile(temp + ex.ToString(), "Error");
+                    }
                     clsCommon.ShowError(ex, SetError("CountRecords(string strTableName, string strCondition)", cmd.CommandText));
                 }
             }
@@ -1478,6 +1564,11 @@ namespace CoreApp
                 catch (Exception ex)
                 {
                     CloseConnection();
+                    if (clsUtility.IsAutoLog)
+                    {
+                        string temp = "CountRecords strTableName: " + strTableName + " Query: " + cmd.CommandText + " ";
+                        ObjUtil.WriteToFile(temp + ex.ToString(), "Error");
+                    }
                     clsCommon.ShowError(ex, SetError("CountRecords(string strTableName)", cmd.CommandText));
                 }
             }
@@ -1516,6 +1607,11 @@ namespace CoreApp
                 catch (Exception ex)
                 {
                     CloseConnection();
+                    if (clsUtility.IsAutoLog)
+                    {
+                        string temp = "BackupDatabase strDatabaseName: " + strDatabaseName + " strPath: " + strPath + " strBackupFileName: " + strBackupFileName + " Query: " + cmd.CommandText + " ";
+                        ObjUtil.WriteToFile(temp + ex.ToString(), "Error");
+                    }
                     clsCommon.ShowError(ex, SetError("BackupDatabase(string strDatabaseName, string strPath, string strBackupFileName)", cmd.CommandText));
                     return false;
                 }
@@ -1684,7 +1780,7 @@ namespace CoreApp
                         cmd.Transaction = ObjTrans;
                     }
                     ObjDA = new SqlDataAdapter();
-                    cmd.CommandText = "select * from " + strDatabase + ".INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='" + strTable + "'";
+                    cmd.CommandText = "SELECT * FROM " + strDatabase + ".INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='" + strTable + "'";
                     _CommandText = cmd.CommandText;
                     ObjDA.SelectCommand = cmd;
                     ObjDA.Fill(dt);
@@ -1694,6 +1790,11 @@ namespace CoreApp
                 catch (Exception ex)
                 {
                     CloseConnection();
+                    if (clsUtility.IsAutoLog)
+                    {
+                        string temp = "GetColumns strDatabase: " + strDatabase + " strTable: " + strTable + " Query: " + cmd.CommandText + " ";
+                        ObjUtil.WriteToFile(temp + ex.ToString(), "Error");
+                    }
                     clsCommon.ShowError(ex, SetError("GetColumns(string strDatabase, string strTable)", cmd.CommandText));
                 }
             }
@@ -1973,6 +2074,11 @@ namespace CoreApp
             }
             catch (Exception ex)
             {
+                if (clsUtility.IsAutoLog)
+                {
+                    string temp = "SetStoreProcedureData strParamterName: " + strParamterName + " Value: " + Value + " strColumns: " + strColumns + " strValues: " + strValues + " ";
+                    ObjUtil.WriteToFile(temp + ex.ToString(), "Error");
+                }
                 clsCommon.ShowError(ex, "SetStoreProcedureData(string strParamterName, SqlDbType DataType, object Value, ParamType parameterType = ParamType.Input)");
                 ResetData();
                 return false;
@@ -2051,6 +2157,11 @@ namespace CoreApp
                     }
                     string strMethod = System.Reflection.MethodBase.GetCurrentMethod().Name;
                     CloseConnection();
+                    if (clsUtility.IsAutoLog)
+                    {
+                        string temp = "ExecuteStoreProcedure_Get strStoreProcedureName: " + strStoreProcedureName + " ";
+                        ObjUtil.WriteToFile(temp + ex.ToString(), "Error");
+                    }
                     clsCommon.ShowError(ex, SetError("ExecuteStoreProcedure_Get(string strStoreProcedureName)", cmd.CommandText));
                     ResetData();
                     return null;
@@ -2131,6 +2242,11 @@ namespace CoreApp
                     }
                     string strMethod = System.Reflection.MethodBase.GetCurrentMethod().Name;
                     CloseConnection();
+                    if (clsUtility.IsAutoLog)
+                    {
+                        string temp = "ExecuteStoreProcedure_DML strStoreProcedureName: " + strStoreProcedureName + " ";
+                        ObjUtil.WriteToFile(temp + ex.ToString(), "Error");
+                    }
                     clsCommon.ShowError(ex, SetError("ExecuteStoreProcedure_DML(string strStoreProcedureName)", cmd.CommandText));
                     ResetData();
                     result = false;

@@ -97,6 +97,10 @@ namespace CoreApp
             SparklePurple
         }
         public static MessageType _UserMessageType;
+        /// <summary>
+        /// Set IsAutoLog=true if you want to log coreApp level exception.
+        /// </summary>
+        public static bool IsAutoLog=false;
 
 
         internal static Dictionary<string, Control> ObjPopupControl = new Dictionary<string, Control>();
