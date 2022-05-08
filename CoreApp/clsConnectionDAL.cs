@@ -2159,8 +2159,18 @@ namespace CoreApp
                     CloseConnection();
                     if (clsUtility.IsAutoLog)
                     {
+                        string strpara = string.Empty;
+                        if (lstSQLParameter.Count > 0)
+                        {
+                            //SqlParameter[] p = lstSQLParameter.ToArray();
+                            //for (int i = 0; i < p.Length; i++)
+                            //{
+                            //    strpara += p[i].ParameterName + " : " + p[i].Value + "\n";
+                            //}
+                            strpara = "ParameterName : " + strColumns + " Values : " + strValues;
+                        }
                         string temp = "ExecuteStoreProcedure_Get strStoreProcedureName: " + strStoreProcedureName + " ";
-                        ObjUtil.WriteToFile(temp + ex.ToString(), "Error");
+                        ObjUtil.WriteToFile(temp + "\n Parameters " + strpara + ex.ToString(), "Error");
                     }
                     clsCommon.ShowError(ex, SetError("ExecuteStoreProcedure_Get(string strStoreProcedureName)", cmd.CommandText));
                     ResetData();
@@ -2244,8 +2254,18 @@ namespace CoreApp
                     CloseConnection();
                     if (clsUtility.IsAutoLog)
                     {
+                        string strpara = string.Empty;
+                        if (lstSQLParameter.Count > 0)
+                        {
+                            //SqlParameter[] p = lstSQLParameter.ToArray();
+                            //for (int i = 0; i < p.Length; i++)
+                            //{
+                            //    strpara += p[i].ParameterName + " : " + p[i].Value + "\n";
+                            //}
+                            strpara = "ParameterName : " + strColumns + " Values : " + strValues;
+                        }
                         string temp = "ExecuteStoreProcedure_DML strStoreProcedureName: " + strStoreProcedureName + " ";
-                        ObjUtil.WriteToFile(temp + ex.ToString(), "Error");
+                        ObjUtil.WriteToFile(temp + "\n Parameters " + strpara + ex.ToString(), "Error");
                     }
                     clsCommon.ShowError(ex, SetError("ExecuteStoreProcedure_DML(string strStoreProcedureName)", cmd.CommandText));
                     ResetData();
