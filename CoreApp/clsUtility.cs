@@ -94,13 +94,14 @@ namespace CoreApp
         {
             Office2007Blue,
             Office2010Blue,
+            BlueTheme,
             SparklePurple
         }
         public static MessageType _UserMessageType;
         /// <summary>
         /// Set IsAutoLog=true if you want to log coreApp level exception.
         /// </summary>
-        public static bool IsAutoLog=false;
+        public static bool IsAutoLog = false;
 
 
         internal static Dictionary<string, Control> ObjPopupControl = new Dictionary<string, Control>();
@@ -563,8 +564,11 @@ namespace CoreApp
             else if (MessageType.Office2007Blue == _UserMessageType)
                 kr.GlobalPaletteMode = PaletteModeManager.Office2007Blue;
 
-            else
+            else if (MessageType.Office2010Blue == _UserMessageType)
                 kr.GlobalPaletteMode = PaletteModeManager.Office2010Blue;
+
+            else
+                kr.GlobalPaletteMode = PaletteModeManager.Office2007Blue;
 
             //MessageBox.Show(strMessage, Title, MessageBoxButtons.OK, MessageBoxIcon.Information);
             KryptonMessageBox.Show(strMessage, Title, MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -584,8 +588,11 @@ namespace CoreApp
             else if (MessageType.Office2007Blue == _UserMessageType)
                 kr.GlobalPaletteMode = PaletteModeManager.Office2007Blue;
 
-            else
+            else if (MessageType.Office2010Blue == _UserMessageType)
                 kr.GlobalPaletteMode = PaletteModeManager.Office2010Blue;
+
+            else
+                kr.GlobalPaletteMode = PaletteModeManager.Office2007Blue;
 
             //MessageBox.Show(strMessage, strProjectTitle, MessageBoxButtons.OK, MessageBoxIcon.Information);
             KryptonMessageBox.Show(strMessage, strProjectTitle, MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -606,8 +613,11 @@ namespace CoreApp
             else if (MessageType.Office2007Blue == _UserMessageType)
                 kr.GlobalPaletteMode = PaletteModeManager.Office2007Blue;
 
-            else
+            else if (MessageType.Office2010Blue == _UserMessageType)
                 kr.GlobalPaletteMode = PaletteModeManager.Office2010Blue;
+
+            else
+                kr.GlobalPaletteMode = PaletteModeManager.Office2007Blue;
 
             //MessageBox.Show(strMessage, Title, MessageBoxButtons.OK, MessageBoxIcon.Error);
 
@@ -628,8 +638,11 @@ namespace CoreApp
             else if (MessageType.Office2007Blue == _UserMessageType)
                 kr.GlobalPaletteMode = PaletteModeManager.Office2007Blue;
 
-            else
+            else if (MessageType.Office2010Blue == _UserMessageType)
                 kr.GlobalPaletteMode = PaletteModeManager.Office2010Blue;
+
+            else
+                kr.GlobalPaletteMode = PaletteModeManager.Office2007Blue;
 
             //MessageBox.Show(strMessage, strProjectTitle, MessageBoxButtons.OK, MessageBoxIcon.Error);
 
@@ -652,8 +665,11 @@ namespace CoreApp
             else if (MessageType.Office2007Blue == _UserMessageType)
                 kr.GlobalPaletteMode = PaletteModeManager.Office2007Blue;
 
-            else
+            else if (MessageType.Office2010Blue == _UserMessageType)
                 kr.GlobalPaletteMode = PaletteModeManager.Office2010Blue;
+
+            else
+                kr.GlobalPaletteMode = PaletteModeManager.Office2007Blue;
 
             //DialogResult d = MessageBox.Show(strMessage, Title, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             DialogResult d = KryptonMessageBox.Show(strMessage, Title, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
@@ -682,8 +698,11 @@ namespace CoreApp
             else if (MessageType.Office2007Blue == _UserMessageType)
                 kr.GlobalPaletteMode = PaletteModeManager.Office2007Blue;
 
-            else
+            else if (MessageType.Office2010Blue == _UserMessageType)
                 kr.GlobalPaletteMode = PaletteModeManager.Office2010Blue;
+
+            else
+                kr.GlobalPaletteMode = PaletteModeManager.Office2007Blue;
 
             //DialogResult d = MessageBox.Show(strMessage, strProjectTitle, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             DialogResult d = KryptonMessageBox.Show(strMessage, strProjectTitle, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
@@ -2303,6 +2322,29 @@ namespace CoreApp
             {
                 clsCommon.ShowError(ex.ToString(), "CloseAlreadyOpen(Type formType)");
             }
+        }
+        /// <summary>
+        /// Get List of All Forms Name
+        /// </summary>
+        /// <returns> return List of string with all form name</returns>
+        public List<string> GetListofAllForms()
+        {
+            //Init Form
+            List<string> list = new List<string>();
+            try
+            {
+                Type formType = typeof(Form);
+                foreach (Type t in System.Reflection.Assembly.GetExecutingAssembly().GetTypes())
+                {
+                    if (formType.IsAssignableFrom(t))
+                        list.Add(t.Name);
+                }
+            }
+            catch (Exception ex)
+            {
+                clsCommon.ShowError(ex.ToString(), "GetListofAllForms()");
+            }
+            return list;
         }
     }
 }
