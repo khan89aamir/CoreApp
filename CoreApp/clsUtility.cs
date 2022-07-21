@@ -100,7 +100,7 @@ namespace CoreApp
         /// <summary>
         /// Set IsAutoLog=true if you want to log coreApp level exception.
         /// </summary>
-        public static bool IsAutoLog=false;
+        public static bool IsAutoLog = false;
 
 
         internal static Dictionary<string, Control> ObjPopupControl = new Dictionary<string, Control>();
@@ -676,7 +676,6 @@ namespace CoreApp
         {
             KryptonManager kr = new KryptonManager();
             if (MessageType.SparklePurple == _UserMessageType)
-
                 kr.GlobalPaletteMode = PaletteModeManager.SparklePurple;
 
             else if (MessageType.Office2007Blue == _UserMessageType)
@@ -829,6 +828,8 @@ namespace CoreApp
                 if (c.GetType() == typeof(TextBox))
                 {
                     TextBox txt = (TextBox)c;
+                    txt.KeyDown += Control_KeyDown;
+                    txt.ShortcutsEnabled = false;
                     if (((e.KeyChar < 48 || e.KeyChar > 57) && e.KeyChar != 8 && e.KeyChar != 46 && e.KeyChar != 13))
                     {
                         b = true;
@@ -842,6 +843,8 @@ namespace CoreApp
                 else if (c.GetType() == typeof(KryptonTextBox))
                 {
                     KryptonTextBox txt = (KryptonTextBox)c;
+                    txt.KeyDown += Control_KeyDown;
+                    txt.ShortcutsEnabled = false;
                     if (((e.KeyChar < 48 || e.KeyChar > 57) && e.KeyChar != 8 && e.KeyChar != 46 && e.KeyChar != 13))
                     {
                         b = true;
@@ -877,6 +880,15 @@ namespace CoreApp
             }
         }
 
+        private void Control_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Control || e.Shift)
+            {
+                e.Handled = true;
+            }
+            else
+                e.Handled = false;
+        }
         /// <summary>
         /// Check if the string is valid name or not at the time of pressing.
         /// </summary>
@@ -969,9 +981,9 @@ namespace CoreApp
         /// <returns>Returns true if email address is valid email address</returns>
         public bool ValidateEmail(string email)
         {
-            string EId = @"^[a-z][a-z|0-9|]*([_][a-z|0-9]+)*([.][a-z|" +
-               @"0-9]+([_][a-z|0-9]+)*)?@[a-z][a-z|0-9|]*\.([a-z]" +
-               @"[a-z|0-9]*(\.[a-z][a-z|0-9]*)?)$";
+            string EId = @"^[A-Z][a-z|0-9|]*([_][a-z|0-9]+)*([.][a-z|" +
+               @"0-9]+([_][a-z|0-9]+)*)?@[A-Z][a-z|0-9|]*\.([A-Z]" +
+               @"[a-z|0-9]*(\.[A-Z][a-z|0-9]*)?)$";
 
             //System.Text.RegularExpressions.Regex emailRegex = new System.Text.RegularExpressions.Regex("^(?<user>[^@]+)@(?<host>.+)$");
             //System.Text.RegularExpressions.Match emailMatch = emailRegex.Match(email);
@@ -2136,7 +2148,13 @@ namespace CoreApp
         {
             try
             {
-                filename = filename + "_" + DateTime.Now.ToString("yyyyMMdd") + ".log";
+                string strPath = string.Empty;
+                strPath = System.Environment.CurrentDirectory + "//Logs";
+                if (!Directory.Exists(System.Environment.CurrentDirectory + "//Logs"))
+                {
+                    Directory.CreateDirectory(System.Environment.CurrentDirectory + "//Logs");
+                }
+                filename = strPath + "//" + filename + "_" + DateTime.Now.ToString("yyyyMMdd") + ".log";
                 StreamWriter sw = new StreamWriter(filename, true);
                 sw.WriteLine("Log Date : " + DateTime.Now.ToString(), filename, true);
                 sw.WriteLine("Log Text : " + strText, filename, true);
