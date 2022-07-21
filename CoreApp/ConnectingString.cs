@@ -8,10 +8,11 @@ using System.Text;
 using System.Windows.Forms;
 using System.Security.Cryptography;
 using System.IO;
+using ComponentFactory.Krypton.Toolkit;
 
 namespace CoreApp
 {
-    internal partial class ConnectingString : Form
+    internal partial class ConnectingString : KryptonForm
     {
         public ConnectingString()
         {

@@ -7,10 +7,11 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Data.SqlClient;
+using ComponentFactory.Krypton.Toolkit;
 
 namespace CoreApp
 {
-    internal partial class ConStringBuilder : Form
+    internal partial class ConStringBuilder : KryptonForm
     {
         public ConStringBuilder()
         {

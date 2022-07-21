@@ -6,13 +6,14 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using ComponentFactory.Krypton.Toolkit;
 
 namespace CoreApp
 {
     /// <summary>
     /// Loading form class with loading image.
     /// </summary>
-    public partial class LoadingContinue : Form
+    public partial class LoadingContinue : KryptonForm
     {
         /// <summary>
         /// Initialize the loading form with loading image.

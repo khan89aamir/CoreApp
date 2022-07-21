@@ -6,10 +6,11 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using System.Threading;
+using ComponentFactory.Krypton.Toolkit;
 
 namespace CoreApp
 {
-    internal partial class LoadingDialog : Form
+    internal partial class LoadingDialog : KryptonForm
     {
         public LoadingDialog()
         {

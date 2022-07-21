@@ -2225,21 +2225,23 @@ namespace CoreApp
                         strCondition = "AND IsOther=1";
                     }
 
-                    SqlCommand cmd = new SqlCommand();
-                    cmd.CommandText = "SELECT COUNT(1) FROM " + clsUtility.DBName + ".dbo.tblUserRights WITH(NOLOCK) WHERE FormID=" + FormID + " " + strCondition + " AND UserID=" + clsUtility.LoginID;
-                    cmdText = cmd.CommandText;
-                    cmd.Connection = con;
-                    con.Open();
-                    object obj = cmd.ExecuteScalar();
-                    if (obj != null)
+                    using (SqlCommand cmd = new SqlCommand())
                     {
-                        if (Convert.ToInt32(obj) > 0)
+                        cmd.CommandText = "SELECT COUNT(1) FROM " + clsUtility.DBName + ".dbo.tblUserRights WITH(NOLOCK) WHERE FormID=" + FormID + " " + strCondition + " AND UserID=" + clsUtility.LoginID;
+                        cmdText = cmd.CommandText;
+                        cmd.Connection = con;
+                        con.Open();
+                        object obj = cmd.ExecuteScalar();
+                        if (obj != null)
                         {
-                            Result = true;
-                        }
-                        else
-                        {
-                            Result = false;
+                            if (Convert.ToInt32(obj) > 0)
+                            {
+                                Result = true;
+                            }
+                            else
+                            {
+                                Result = false;
+                            }
                         }
                     }
                     con.Close();
@@ -2260,21 +2262,23 @@ namespace CoreApp
             {
                 using (SqlConnection con = new SqlConnection(clsConnection_DAL.strConnectionString))
                 {
-                    SqlCommand cmd = new SqlCommand();
-                    cmd.CommandText = "SELECT COUNT(1) FROM " + clsUtility.DBName + ".dbo.tblUserRights WITH(NOLOCK) WHERE FormID=" + FormID + " AND UserID=" + clsUtility.LoginID;
-                    cmdText = cmd.CommandText;
-                    cmd.Connection = con;
-                    con.Open();
-                    object obj = cmd.ExecuteScalar();
-                    if (obj != null)
+                    using (SqlCommand cmd = new SqlCommand())
                     {
-                        if (Convert.ToInt32(obj) > 0)
+                        cmd.CommandText = "SELECT COUNT(1) FROM " + clsUtility.DBName + ".dbo.tblUserRights WITH(NOLOCK) WHERE FormID=" + FormID + " AND UserID=" + clsUtility.LoginID;
+                        cmdText = cmd.CommandText;
+                        cmd.Connection = con;
+                        con.Open();
+                        object obj = cmd.ExecuteScalar();
+                        if (obj != null)
                         {
-                            Result = true;
-                        }
-                        else
-                        {
-                            Result = false;
+                            if (Convert.ToInt32(obj) > 0)
+                            {
+                                Result = true;
+                            }
+                            else
+                            {
+                                Result = false;
+                            }
                         }
                     }
                     con.Close();
@@ -2344,15 +2348,17 @@ namespace CoreApp
         /// <summary>
         /// Get List of All Forms Name
         /// </summary>
-        /// <returns> return List of string with all form name</returns>
-        public List<string> GetListofAllForms()
+        /// <param name="types">System.Reflection.Assembly.GetExecutingAssembly().GetTypes()</param>
+        /// <returns>return List of string with all form name</returns>
+        public List<string> GetListofAllForms(Type[] types)
         {
             //Init Form
             List<string> list = new List<string>();
             try
             {
                 Type formType = typeof(Form);
-                foreach (Type t in System.Reflection.Assembly.GetExecutingAssembly().GetTypes())
+                //foreach (Type t in System.Reflection.Assembly.GetExecutingAssembly().GetTypes())
+                foreach (Type t in types)
                 {
                     if (formType.IsAssignableFrom(t))
                         list.Add(t.Name);
@@ -2360,7 +2366,7 @@ namespace CoreApp
             }
             catch (Exception ex)
             {
-                clsCommon.ShowError(ex.ToString(), "GetListofAllForms()");
+                clsCommon.ShowError(ex.ToString(), "GetListofAllForms(Type[] types)");
             }
             return list;
         }
