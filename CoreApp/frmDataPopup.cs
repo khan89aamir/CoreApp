@@ -107,6 +107,11 @@ namespace CoreApp
                                 {
                                     c.Text = selectedRows[0].Cells[dgvPopup.Columns[i].Name].Value.ToString();
                                 }
+                                else if (c.GetType() == typeof(ComponentFactory.Krypton.Toolkit.KryptonTextBox))
+                                {
+                                    c.Text = selectedRows[0].Cells[dgvPopup.Columns[i].Name].Value.ToString();
+
+                                }
                             }
                         }
                     }
@@ -152,6 +157,11 @@ namespace CoreApp
                                 else if (c.GetType() == typeof(Label))
                                 {
                                     c.Text = selectedRows[0].Cells[dgvPopup.Columns[i].Name].Value.ToString();
+                                }
+                                else if (c.GetType() == typeof(ComponentFactory.Krypton.Toolkit.KryptonTextBox))
+                                {
+                                    c.Text = selectedRows[0].Cells[dgvPopup.Columns[i].Name].Value.ToString();
+
                                 }
                             }
                         }

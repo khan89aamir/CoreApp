@@ -6,13 +6,13 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-
+using ComponentFactory.Krypton.Toolkit;
 namespace CoreApp
 {
     /// <summary>
     /// Error window class.
     /// </summary>
-    public partial class ErrorWindow : Form
+    public partial class ErrorWindow : KryptonForm
     {
         internal string errstring;
         /// <summary>
