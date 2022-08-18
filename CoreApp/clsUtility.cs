@@ -89,7 +89,8 @@ namespace CoreApp
         public const string MsgActionClose = "Are you sure, you want to close this window?";
 
         #endregion
-
+        // this can be set from the calling app
+        public string EmailRegex = string.Empty;
         public enum MessageType
         {
             Office2007Blue,
@@ -1000,9 +1001,8 @@ namespace CoreApp
         /// <returns>Returns true if email address is valid email address</returns>
         public bool ValidateEmail(string email)
         {
-            string EId = @"^[A-Z][a-z|0-9|]*([_][a-z|0-9]+)*([.][a-z|" +
-               @"0-9]+([_][a-z|0-9]+)*)?@[A-Z][a-z|0-9|]*\.([A-Z]" +
-               @"[a-z|0-9]*(\.[A-Z][a-z|0-9]*)?)$";
+            string EId = string.Empty;
+            EId = EmailRegex == string.Empty ? @"^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$" : EmailRegex;
 
             //System.Text.RegularExpressions.Regex emailRegex = new System.Text.RegularExpressions.Regex("^(?<user>[^@]+)@(?<host>.+)$");
             //System.Text.RegularExpressions.Match emailMatch = emailRegex.Match(email);
