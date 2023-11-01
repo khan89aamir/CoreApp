@@ -2174,11 +2174,13 @@ namespace CoreApp
                     Directory.CreateDirectory(System.Environment.CurrentDirectory + "//Logs");
                 }
                 filename = strPath + "//" + filename + "_" + DateTime.Now.ToString("yyyyMMdd") + ".log";
-                StreamWriter sw = new StreamWriter(filename, true);
-                sw.WriteLine("Log Date : " + DateTime.Now.ToString(), filename, true);
-                sw.WriteLine("Log Text : " + strText, filename, true);
-                sw.WriteLine("______________________________________", filename, true);
-                sw.Close();
+                using (StreamWriter sw = new StreamWriter(filename, true))
+                {
+                    sw.WriteLine("Log Date : " + DateTime.Now.ToString(), filename, true);
+                    sw.WriteLine("Log Text : " + strText, filename, true);
+                    sw.WriteLine("______________________________________", filename, true);
+                    sw.Close();
+                }
             }
             catch (UnauthorizedAccessException)
             {

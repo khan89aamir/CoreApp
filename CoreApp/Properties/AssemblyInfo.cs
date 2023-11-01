@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Atech++")]
 [assembly: AssemblyProduct("CoreApp")]
-[assembly: AssemblyCopyright("Copyright © Atech++ 2022")]
+[assembly: AssemblyCopyright("Copyright © Atech++ 2023")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

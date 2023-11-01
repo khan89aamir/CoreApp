@@ -76,13 +76,13 @@ namespace CoreApp
             {
                 if (clsConnection_DAL.strConnectionString == null)
                 {
-                    Objcon = new SqlConnection();
+                    //Objcon = new SqlConnection();
                 }
                 else
                 {
                     if (clsConnection_DAL.strConnectionString.Trim().Length != 0)
                     {
-                        Objcon = new SqlConnection(clsConnection_DAL.strConnectionString);
+                        //Objcon = new SqlConnection(clsConnection_DAL.strConnectionString);
                     }
                 }
                 c1[0] = '[';
@@ -104,7 +104,10 @@ namespace CoreApp
             try
             {
                 _IsEncrypted = IsEncrypted;
-                Objcon = new SqlConnection(GetConnectionString());
+                //Objcon = new SqlConnection(GetConnectionString());
+
+                GetConnectionString();
+
                 c1[0] = '[';
                 c1[1] = ']';
             }
@@ -174,12 +177,12 @@ namespace CoreApp
             }
 
             int result = 0;
-            using (SqlCommand cmd = new SqlCommand())
+            using (SqlConnection Objcon = new SqlConnection())
             {
-                string strQuery = string.Empty;
-                try
+                using (SqlCommand cmd = new SqlCommand())
                 {
-                    if (Objcon.State == ConnectionState.Closed || Objcon.State == ConnectionState.Broken)
+                    string strQuery = string.Empty;
+                    try
                     {
                         // if Connection object doest have the connection string then set the static connection string .
                         if (Objcon.ConnectionString.Trim().Length == 0)
@@ -187,44 +190,44 @@ namespace CoreApp
                             Objcon.ConnectionString = clsConnection_DAL.strConnectionString;
                         }
                         Objcon.Open();
-                    }
 
-                    DataTable dt = new DataTable();
-                    // Transaction is in progress.
-                    if (ObjTrans != null)
-                    {
-                        cmd.Transaction = ObjTrans;
-                    }
+                        DataTable dt = new DataTable();
+                        // Transaction is in progress.
+                        if (ObjTrans != null)
+                        {
+                            cmd.Transaction = ObjTrans;
+                        }
 
-                    cmd.Connection = Objcon;
+                        cmd.Connection = Objcon;
 
-                    //Replace the where keyword by empty string.
-                    if (strCondition != null)
-                    {
-                        strCondition = strCondition.Replace("Where", " ");
-                    }
-                    strQuery = "DELETE " + strTableName + " WHERE " + strCondition;
-                    cmd.CommandText = strQuery;
-                    _CommandText = cmd.CommandText;
-                    result = cmd.ExecuteNonQuery();
+                        //Replace the where keyword by empty string.
+                        if (strCondition != null)
+                        {
+                            strCondition = strCondition.Replace("Where", " ");
+                        }
+                        strQuery = "DELETE " + strTableName + " WHERE " + strCondition;
+                        cmd.CommandText = strQuery;
+                        _CommandText = cmd.CommandText;
+                        result = cmd.ExecuteNonQuery();
 
-                    CloseConnection();
-                }
-                catch (Exception ex)
-                {
-                    if (ObjTrans != null)
-                    {
-                        IsRollBack = true;
-                        ObjTrans.Rollback();
+                        //CloseConnection();
                     }
-                    CloseConnection();
-                    if (clsUtility.IsAutoLog)
+                    catch (Exception ex)
                     {
-                        string temp = "DeleteData strTableName: " + strTableName + " Query: " + strQuery + " ";
-                        ObjUtil.WriteToFile(temp + ex.ToString(), "Error");
+                        if (ObjTrans != null)
+                        {
+                            IsRollBack = true;
+                            ObjTrans.Rollback();
+                        }
+                        //CloseConnection();
+                        if (clsUtility.IsAutoLog)
+                        {
+                            string temp = "DeleteData strTableName: " + strTableName + " Query: " + strQuery + " ";
+                            ObjUtil.WriteToFile(temp + ex.ToString(), "Error");
+                        }
+                        clsCommon.ShowError(ex, SetError("DeleteData(string strTableName, string strCondition)", cmd.CommandText));
+                        return -1;
                     }
-                    clsCommon.ShowError(ex, SetError("DeleteData(string strTableName, string strCondition)", cmd.CommandText));
-                    return -1;
                 }
             }
             return result;
@@ -273,12 +276,12 @@ namespace CoreApp
                 return -1;
             }
             int result = 0;
-            using (SqlCommand cmd = new SqlCommand())
+            using (SqlConnection Objcon = new SqlConnection())
             {
-                string strQuery = string.Empty;
-                try
+                using (SqlCommand cmd = new SqlCommand())
                 {
-                    if (Objcon.State == ConnectionState.Closed || Objcon.State == ConnectionState.Broken)
+                    string strQuery = string.Empty;
+                    try
                     {
                         // if Connection object doest have the connection string then set the static connection string .
                         if (Objcon.ConnectionString.Trim().Length == 0)
@@ -286,58 +289,58 @@ namespace CoreApp
                             Objcon.ConnectionString = clsConnection_DAL.strConnectionString;
                         }
                         Objcon.Open();
-                    }
 
-                    // Transaction is in progress.
-                    if (ObjTrans != null)
-                    {
-                        cmd.Transaction = ObjTrans;
-                    }
-                    SqlParameter[] p = lstSQLParameter.ToArray();
-                    if (ReturnIdentity)
-                    {
-                        strQuery = "INSERT INTO " + strTableName + "(" + strColumns + ") VALUES(" + strValues + "); SELECT SCOPE_IDENTITY()";
-                        cmd.CommandText = strQuery;
-                    }
-                    else
-                    {
-                        strQuery = "INSERT INTO " + strTableName + "(" + strColumns + ") VALUES(" + strValues + ")";
-                        cmd.CommandText = strQuery;
-                    }
-                    _CommandText = cmd.CommandText;
-                    cmd.Parameters.AddRange(p);
-                    cmd.Connection = Objcon;
+                        // Transaction is in progress.
+                        if (ObjTrans != null)
+                        {
+                            cmd.Transaction = ObjTrans;
+                        }
+                        SqlParameter[] p = lstSQLParameter.ToArray();
+                        if (ReturnIdentity)
+                        {
+                            strQuery = "INSERT INTO " + strTableName + "(" + strColumns + ") VALUES(" + strValues + "); SELECT SCOPE_IDENTITY()";
+                            cmd.CommandText = strQuery;
+                        }
+                        else
+                        {
+                            strQuery = "INSERT INTO " + strTableName + "(" + strColumns + ") VALUES(" + strValues + ")";
+                            cmd.CommandText = strQuery;
+                        }
+                        _CommandText = cmd.CommandText;
+                        cmd.Parameters.AddRange(p);
+                        cmd.Connection = Objcon;
 
-                    // if user want identity value then get the identity value.
-                    if (ReturnIdentity)
-                    {
-                        result = Convert.ToInt32(cmd.ExecuteScalar());
+                        // if user want identity value then get the identity value.
+                        if (ReturnIdentity)
+                        {
+                            result = Convert.ToInt32(cmd.ExecuteScalar());
+                        }
+                        else
+                        {
+                            result = cmd.ExecuteNonQuery();
+                        }
+                        //CloseConnection();
                     }
-                    else
+                    catch (Exception ex)
                     {
-                        result = cmd.ExecuteNonQuery();
+                        if (ObjTrans != null)
+                        {
+                            IsRollBack = true;
+                            ObjTrans.Rollback();
+                        }
+                        string strMethod = System.Reflection.MethodBase.GetCurrentMethod().Name;
+                        //CloseConnection();
+                        if (clsUtility.IsAutoLog)
+                        {
+                            string temp = "InsertData strTableName: " + strTableName + " Query: " + strQuery + " ";
+                            ObjUtil.WriteToFile(temp + ex.ToString(), "Error");
+                        }
+                        clsCommon.ShowError(ex, SetError("InsertData(string strTableName, bool ReturnIdentity)", cmd.CommandText));
+                        ResetData();
+                        return -1;
                     }
-                    CloseConnection();
-                }
-                catch (Exception ex)
-                {
-                    if (ObjTrans != null)
-                    {
-                        IsRollBack = true;
-                        ObjTrans.Rollback();
-                    }
-                    string strMethod = System.Reflection.MethodBase.GetCurrentMethod().Name;
-                    CloseConnection();
-                    if (clsUtility.IsAutoLog)
-                    {
-                        string temp = "InsertData strTableName: " + strTableName + " Query: " + strQuery + " ";
-                        ObjUtil.WriteToFile(temp + ex.ToString(), "Error");
-                    }
-                    clsCommon.ShowError(ex, SetError("InsertData(string strTableName, bool ReturnIdentity)", cmd.CommandText));
                     ResetData();
-                    return -1;
                 }
-                ResetData();
             }
             return result;
         }
@@ -360,12 +363,12 @@ namespace CoreApp
                 return -1;
             }
             int result = 0;
-            using (SqlCommand cmd = new SqlCommand())
+            using (SqlConnection Objcon = new SqlConnection())
             {
-                string strQuery = string.Empty;
-                try
+                using (SqlCommand cmd = new SqlCommand())
                 {
-                    if (Objcon.State == ConnectionState.Closed || Objcon.State == ConnectionState.Broken)
+                    string strQuery = string.Empty;
+                    try
                     {
                         // if Connection object doest have the connection string then set the static connection string .
                         if (Objcon.ConnectionString.Trim().Length == 0)
@@ -373,42 +376,43 @@ namespace CoreApp
                             Objcon.ConnectionString = clsConnection_DAL.strConnectionString;
                         }
                         Objcon.Open();
-                    }
-                    // Transaction is in progress.
-                    if (ObjTrans != null)
-                    {
-                        cmd.Transaction = ObjTrans;
-                    }
 
-                    SqlParameter[] p = lstSQLParameter.ToArray();
+                        // Transaction is in progress.
+                        if (ObjTrans != null)
+                        {
+                            cmd.Transaction = ObjTrans;
+                        }
 
-                    strCondition = strCondition.Replace("where", " ");
-                    strQuery = "UPDATE " + strTableName + " SET " + strColumns + " WHERE " + strCondition; ;
-                    cmd.CommandText = strQuery;
-                    _CommandText = cmd.CommandText;
-                    cmd.Parameters.AddRange(p);
-                    cmd.Connection = Objcon;
-                    result = cmd.ExecuteNonQuery();
-                    CloseConnection();
-                }
-                catch (Exception ex)
-                {
-                    if (ObjTrans != null)
-                    {
-                        IsRollBack = true;
-                        ObjTrans.Rollback();
+                        SqlParameter[] p = lstSQLParameter.ToArray();
+
+                        strCondition = strCondition.Replace("where", " ");
+                        strQuery = "UPDATE " + strTableName + " SET " + strColumns + " WHERE " + strCondition; ;
+                        cmd.CommandText = strQuery;
+                        _CommandText = cmd.CommandText;
+                        cmd.Parameters.AddRange(p);
+                        cmd.Connection = Objcon;
+                        result = cmd.ExecuteNonQuery();
+                        //CloseConnection();
                     }
-                    CloseConnection();
-                    if (clsUtility.IsAutoLog)
+                    catch (Exception ex)
                     {
-                        string temp = "UpdateData strTableName: " + strTableName + " strCondition: " + strCondition + " Query: " + strQuery + " ";
-                        ObjUtil.WriteToFile(temp + ex.ToString(), "Error");
+                        if (ObjTrans != null)
+                        {
+                            IsRollBack = true;
+                            ObjTrans.Rollback();
+                        }
+                        //CloseConnection();
+                        if (clsUtility.IsAutoLog)
+                        {
+                            string temp = "UpdateData strTableName: " + strTableName + " strCondition: " + strCondition + " Query: " + strQuery + " ";
+                            ObjUtil.WriteToFile(temp + ex.ToString(), "Error");
+                        }
+                        clsCommon.ShowError(ex, SetError("UpdateData(string strTableName, string strCondition)", cmd.CommandText));
+                        ResetData();
+                        return -1;
                     }
-                    clsCommon.ShowError(ex, SetError("UpdateData(string strTableName, string strCondition)", cmd.CommandText));
                     ResetData();
-                    return -1;
                 }
-                ResetData();
             }
             return result;
         }
@@ -606,11 +610,11 @@ namespace CoreApp
                 //Clear Dictionary list for Pop-up
                 clsUtility.ObjPopupControl.Clear();
             }
-            using (SqlCommand cmd = new SqlCommand())
+            using (SqlConnection Objcon = new SqlConnection())
             {
-                try
+                using (SqlCommand cmd = new SqlCommand())
                 {
-                    if (Objcon.State == ConnectionState.Closed || Objcon.State == ConnectionState.Broken)
+                    try
                     {
                         // if Connection object doest have the connection string then set the static connection string .
                         if (Objcon.ConnectionString.Trim().Length == 0)
@@ -618,31 +622,32 @@ namespace CoreApp
                             Objcon.ConnectionString = clsConnection_DAL.strConnectionString;
                         }
                         Objcon.Open();
+
+                        DataTable dt = new DataTable();
+                        cmd.Connection = Objcon;
+                        // Transaction is in progress.
+                        if (ObjTrans != null)
+                        {
+                            cmd.Transaction = ObjTrans;
+                        }
+                        ObjDA = new SqlDataAdapter();
+                        cmd.CommandText = "SELECT * FROM " + strTableName + " WITH(NOLOCK)";
+                        _CommandText = cmd.CommandText;
+                        ObjDA.SelectCommand = cmd;
+                        ObjDA.Fill(dt);
+                        //CloseConnection();
+                        return dt;
                     }
-                    DataTable dt = new DataTable();
-                    cmd.Connection = Objcon;
-                    // Transaction is in progress.
-                    if (ObjTrans != null)
+                    catch (Exception ex)
                     {
-                        cmd.Transaction = ObjTrans;
+                        //CloseConnection();
+                        if (clsUtility.IsAutoLog)
+                        {
+                            string temp = "GetData strTableName: " + strTableName + " ";
+                            ObjUtil.WriteToFile(temp + ex.ToString(), "Error");
+                        }
+                        clsCommon.ShowError(ex, SetError("GetData(string strTableName)", cmd.CommandText));
                     }
-                    ObjDA = new SqlDataAdapter();
-                    cmd.CommandText = "SELECT * FROM " + strTableName + " WITH(NOLOCK)";
-                    _CommandText = cmd.CommandText;
-                    ObjDA.SelectCommand = cmd;
-                    ObjDA.Fill(dt);
-                    CloseConnection();
-                    return dt;
-                }
-                catch (Exception ex)
-                {
-                    CloseConnection();
-                    if (clsUtility.IsAutoLog)
-                    {
-                        string temp = "GetData strTableName: " + strTableName + " ";
-                        ObjUtil.WriteToFile(temp + ex.ToString(), "Error");
-                    }
-                    clsCommon.ShowError(ex, SetError("GetData(string strTableName)", cmd.CommandText));
                 }
             }
             return null;
@@ -671,11 +676,11 @@ namespace CoreApp
                 //Clear Dictionary list for Pop-up
                 clsUtility.ObjPopupControl.Clear();
             }
-            using (SqlCommand cmd = new SqlCommand())
+            using (SqlConnection Objcon = new SqlConnection())
             {
-                try
+                using (SqlCommand cmd = new SqlCommand())
                 {
-                    if (Objcon.State == ConnectionState.Closed || Objcon.State == ConnectionState.Broken)
+                    try
                     {
                         // if Connection object doest have the connection string then set the static connection string .
                         if (Objcon.ConnectionString.Trim().Length == 0)
@@ -683,39 +688,40 @@ namespace CoreApp
                             Objcon.ConnectionString = clsConnection_DAL.strConnectionString;
                         }
                         Objcon.Open();
+
+                        DataTable dt = new DataTable();
+                        cmd.Connection = Objcon;
+                        ObjDA = new SqlDataAdapter();
+                        if (OrderByclause != null)
+                        {
+                            OrderByclause = OrderByclause.Replace("order by", " ");
+                            cmd.CommandText = "SELECT * FROM " + strTableName + " WITH(NOLOCK) ORDER BY " + OrderByclause;
+                        }
+                        else
+                        {
+                            cmd.CommandText = "SELECT * FROM " + strTableName + " WITH(NOLOCK)";
+                        }
+                        ObjDA.SelectCommand = cmd;
+                        // Transaction is in progress.
+                        if (ObjTrans != null)
+                        {
+                            cmd.Transaction = ObjTrans;
+                        }
+                        _CommandText = cmd.CommandText;
+                        ObjDA.Fill(dt);
+                        //CloseConnection();
+                        return dt;
                     }
-                    DataTable dt = new DataTable();
-                    cmd.Connection = Objcon;
-                    ObjDA = new SqlDataAdapter();
-                    if (OrderByclause != null)
+                    catch (Exception ex)
                     {
-                        OrderByclause = OrderByclause.Replace("order by", " ");
-                        cmd.CommandText = "SELECT * FROM " + strTableName + " WITH(NOLOCK) ORDER BY " + OrderByclause;
+                        //CloseConnection();
+                        if (clsUtility.IsAutoLog)
+                        {
+                            string temp = "GetData strTableName: " + strTableName + " OrderByclause: " + OrderByclause + " Query: " + cmd.CommandText + " ";
+                            ObjUtil.WriteToFile(temp + ex.ToString(), "Error");
+                        }
+                        clsCommon.ShowError(ex, SetError("GetData(string strTableName, string OrderByclause)", cmd.CommandText));
                     }
-                    else
-                    {
-                        cmd.CommandText = "SELECT * FROM " + strTableName + " WITH(NOLOCK)";
-                    }
-                    ObjDA.SelectCommand = cmd;
-                    // Transaction is in progress.
-                    if (ObjTrans != null)
-                    {
-                        cmd.Transaction = ObjTrans;
-                    }
-                    _CommandText = cmd.CommandText;
-                    ObjDA.Fill(dt);
-                    CloseConnection();
-                    return dt;
-                }
-                catch (Exception ex)
-                {
-                    CloseConnection();
-                    if (clsUtility.IsAutoLog)
-                    {
-                        string temp = "GetData strTableName: " + strTableName + " OrderByclause: " + OrderByclause + " Query: " + cmd.CommandText + " ";
-                        ObjUtil.WriteToFile(temp + ex.ToString(), "Error");
-                    }
-                    clsCommon.ShowError(ex, SetError("GetData(string strTableName, string OrderByclause)", cmd.CommandText));
                 }
             }
             return null;
@@ -746,11 +752,11 @@ namespace CoreApp
                 //Clear Dictionary list for Pop-up
                 clsUtility.ObjPopupControl.Clear();
             }
-            using (SqlCommand cmd = new SqlCommand())
+            using (SqlConnection Objcon = new SqlConnection())
             {
-                try
+                using (SqlCommand cmd = new SqlCommand())
                 {
-                    if (Objcon.State == ConnectionState.Closed || Objcon.State == ConnectionState.Broken)
+                    try
                     {
                         // if Connection object doest have the connection string then set the static connection string .
                         if (Objcon.ConnectionString.Trim().Length == 0)
@@ -758,46 +764,46 @@ namespace CoreApp
                             Objcon.ConnectionString = clsConnection_DAL.strConnectionString;
                         }
                         Objcon.Open();
-                    }
 
-                    DataTable dt = new DataTable();
-                    cmd.Connection = Objcon;
-                    // Transaction is in progress.
-                    if (ObjTrans != null)
-                    {
-                        cmd.Transaction = ObjTrans;
-                    }
-                    ObjDA = new SqlDataAdapter();
+                        DataTable dt = new DataTable();
+                        cmd.Connection = Objcon;
+                        // Transaction is in progress.
+                        if (ObjTrans != null)
+                        {
+                            cmd.Transaction = ObjTrans;
+                        }
+                        ObjDA = new SqlDataAdapter();
 
-                    //Replace the where keyword by empty string.
-                    if (strCondition != null)
-                    {
-                        strCondition = strCondition.Replace("Where", " ");
+                        //Replace the where keyword by empty string.
+                        if (strCondition != null)
+                        {
+                            strCondition = strCondition.Replace("Where", " ");
+                        }
+                        if (OrderByclause != null)
+                        {
+                            OrderByclause = OrderByclause.Replace("order by", " ");
+                            cmd.CommandText = "SELECT * FROM " + strTableName + " WITH(NOLOCK) WHERE " + strCondition + " ORDER BY " + OrderByclause;
+                        }
+                        else
+                        {
+                            cmd.CommandText = "SELECT * FROM " + strTableName + " WITH(NOLOCK) WHERE " + strCondition;
+                        }
+                        _CommandText = cmd.CommandText;
+                        ObjDA.SelectCommand = cmd;
+                        ObjDA.Fill(dt);
+                        //CloseConnection();
+                        return dt;
                     }
-                    if (OrderByclause != null)
+                    catch (Exception ex)
                     {
-                        OrderByclause = OrderByclause.Replace("order by", " ");
-                        cmd.CommandText = "SELECT * FROM " + strTableName + " WITH(NOLOCK) WHERE " + strCondition + " ORDER BY " + OrderByclause;
+                        //CloseConnection();
+                        if (clsUtility.IsAutoLog)
+                        {
+                            string temp = "GetData strTableName: " + strTableName + " strCondition: " + strCondition + " Query: " + cmd.CommandText + " ";
+                            ObjUtil.WriteToFile(temp + ex.ToString(), "Error");
+                        }
+                        clsCommon.ShowError(ex, SetError("GetData(string strTableName, string strCondition, string OrderByclause)", cmd.CommandText));
                     }
-                    else
-                    {
-                        cmd.CommandText = "SELECT * FROM " + strTableName + " WITH(NOLOCK) WHERE " + strCondition;
-                    }
-                    _CommandText = cmd.CommandText;
-                    ObjDA.SelectCommand = cmd;
-                    ObjDA.Fill(dt);
-                    CloseConnection();
-                    return dt;
-                }
-                catch (Exception ex)
-                {
-                    CloseConnection();
-                    if (clsUtility.IsAutoLog)
-                    {
-                        string temp = "GetData strTableName: " + strTableName + " strCondition: " + strCondition + " Query: " + cmd.CommandText + " ";
-                        ObjUtil.WriteToFile(temp + ex.ToString(), "Error");
-                    }
-                    clsCommon.ShowError(ex, SetError("GetData(string strTableName, string strCondition, string OrderByclause)", cmd.CommandText));
                 }
             }
             return null;
@@ -826,11 +832,11 @@ namespace CoreApp
                 //Clear Dictionary list for Pop-up
                 clsUtility.ObjPopupControl.Clear();
             }
-            using (SqlCommand cmd = new SqlCommand())
+            using (SqlConnection Objcon = new SqlConnection())
             {
-                try
+                using (SqlCommand cmd = new SqlCommand())
                 {
-                    if (Objcon.State == ConnectionState.Closed || Objcon.State == ConnectionState.Broken)
+                    try
                     {
                         // if Connection object doest have the connection string then set the static connection string .
                         if (Objcon.ConnectionString.Trim().Length == 0)
@@ -838,40 +844,40 @@ namespace CoreApp
                             Objcon.ConnectionString = clsConnection_DAL.strConnectionString;
                         }
                         Objcon.Open();
-                    }
 
-                    DataTable dt = new DataTable();
-                    cmd.Connection = Objcon;
-                    // Transaction is in progress.
-                    if (ObjTrans != null)
-                    {
-                        cmd.Transaction = ObjTrans;
+                        DataTable dt = new DataTable();
+                        cmd.Connection = Objcon;
+                        // Transaction is in progress.
+                        if (ObjTrans != null)
+                        {
+                            cmd.Transaction = ObjTrans;
+                        }
+                        ObjDA = new SqlDataAdapter();
+                        if (OrderByclause != null)
+                        {
+                            OrderByclause = OrderByclause.Replace("order by", " ");
+                            cmd.CommandText = "SELECT " + strColumns + " FROM " + strTableName + " WITH(NOLOCK) ORDER BY " + OrderByclause;
+                        }
+                        else
+                        {
+                            cmd.CommandText = "SELECT " + strColumns + " FROM " + strTableName + " WITH(NOLOCK)";
+                        }
+                        _CommandText = cmd.CommandText;
+                        ObjDA.SelectCommand = cmd;
+                        ObjDA.Fill(dt);
+                        //CloseConnection();
+                        return dt;
                     }
-                    ObjDA = new SqlDataAdapter();
-                    if (OrderByclause != null)
+                    catch (Exception ex)
                     {
-                        OrderByclause = OrderByclause.Replace("order by", " ");
-                        cmd.CommandText = "SELECT " + strColumns + " FROM " + strTableName + " WITH(NOLOCK) ORDER BY " + OrderByclause;
+                        //CloseConnection();
+                        if (clsUtility.IsAutoLog)
+                        {
+                            string temp = "GetDataCol strTableName: " + strTableName + " strColumns: " + strColumns + " Query: " + cmd.CommandText + " ";
+                            ObjUtil.WriteToFile(temp + ex.ToString(), "Error");
+                        }
+                        clsCommon.ShowError(ex, SetError("GetDataCol(string strTableName, string strColumns, string OrderByclause)", cmd.CommandText));
                     }
-                    else
-                    {
-                        cmd.CommandText = "SELECT " + strColumns + " FROM " + strTableName + " WITH(NOLOCK)";
-                    }
-                    _CommandText = cmd.CommandText;
-                    ObjDA.SelectCommand = cmd;
-                    ObjDA.Fill(dt);
-                    CloseConnection();
-                    return dt;
-                }
-                catch (Exception ex)
-                {
-                    CloseConnection();
-                    if (clsUtility.IsAutoLog)
-                    {
-                        string temp = "GetDataCol strTableName: " + strTableName + " strColumns: " + strColumns + " Query: " + cmd.CommandText + " ";
-                        ObjUtil.WriteToFile(temp + ex.ToString(), "Error");
-                    }
-                    clsCommon.ShowError(ex, SetError("GetDataCol(string strTableName, string strColumns, string OrderByclause)", cmd.CommandText));
                 }
             }
             return null;
@@ -903,11 +909,11 @@ namespace CoreApp
                 //Clear Dictionary list for Pop-up
                 clsUtility.ObjPopupControl.Clear();
             }
-            using (SqlCommand cmd = new SqlCommand())
+            using (SqlConnection Objcon = new SqlConnection())
             {
-                try
+                using (SqlCommand cmd = new SqlCommand())
                 {
-                    if (Objcon.State == ConnectionState.Closed || Objcon.State == ConnectionState.Broken)
+                    try
                     {
                         // if Connection object doest have the connection string then set the static connection string .
                         if (Objcon.ConnectionString.Trim().Length == 0)
@@ -915,45 +921,46 @@ namespace CoreApp
                             Objcon.ConnectionString = clsConnection_DAL.strConnectionString;
                         }
                         Objcon.Open();
-                    }
-                    DataTable dt = new DataTable();
-                    cmd.Connection = Objcon;
-                    // Transaction is in progress.
-                    if (ObjTrans != null)
-                    {
-                        cmd.Transaction = ObjTrans;
-                    }
-                    ObjDA = new SqlDataAdapter();
 
-                    //Replace the where keyword by empty string.
-                    if (strCondition != null)
-                    {
-                        strCondition = strCondition.Replace("Where", " ");
+                        DataTable dt = new DataTable();
+                        cmd.Connection = Objcon;
+                        // Transaction is in progress.
+                        if (ObjTrans != null)
+                        {
+                            cmd.Transaction = ObjTrans;
+                        }
+                        ObjDA = new SqlDataAdapter();
+
+                        //Replace the where keyword by empty string.
+                        if (strCondition != null)
+                        {
+                            strCondition = strCondition.Replace("Where", " ");
+                        }
+                        if (OrderByclause != null)
+                        {
+                            OrderByclause = OrderByclause.Replace("order by", " ");
+                            cmd.CommandText = "SELECT " + strColumns + " FROM " + strTableName + " WITH(NOLOCK) WHERE " + strCondition + " ORDER BY " + OrderByclause;
+                        }
+                        else
+                        {
+                            cmd.CommandText = "SELECT " + strColumns + " FROM " + strTableName + " WITH(NOLOCK) WHERE " + strCondition;
+                        }
+                        _CommandText = cmd.CommandText;
+                        ObjDA.SelectCommand = cmd;
+                        ObjDA.Fill(dt);
+                        //CloseConnection();
+                        return dt;
                     }
-                    if (OrderByclause != null)
+                    catch (Exception ex)
                     {
-                        OrderByclause = OrderByclause.Replace("order by", " ");
-                        cmd.CommandText = "SELECT " + strColumns + " FROM " + strTableName + " WITH(NOLOCK) WHERE " + strCondition + " ORDER BY " + OrderByclause;
+                        //CloseConnection();
+                        if (clsUtility.IsAutoLog)
+                        {
+                            string temp = "GetDataCol strTableName: " + strTableName + " strColumns: " + strColumns + " Query: " + cmd.CommandText + " ";
+                            ObjUtil.WriteToFile(temp + ex.ToString(), "Error");
+                        }
+                        clsCommon.ShowError(ex, SetError("GetDataCol(string strTableName, string strColumns, string strCondition, string OrderByclause)", cmd.CommandText));
                     }
-                    else
-                    {
-                        cmd.CommandText = "SELECT " + strColumns + " FROM " + strTableName + " WITH(NOLOCK) WHERE " + strCondition;
-                    }
-                    _CommandText = cmd.CommandText;
-                    ObjDA.SelectCommand = cmd;
-                    ObjDA.Fill(dt);
-                    CloseConnection();
-                    return dt;
-                }
-                catch (Exception ex)
-                {
-                    CloseConnection();
-                    if (clsUtility.IsAutoLog)
-                    {
-                        string temp = "GetDataCol strTableName: " + strTableName + " strColumns: " + strColumns + " Query: " + cmd.CommandText + " ";
-                        ObjUtil.WriteToFile(temp + ex.ToString(), "Error");
-                    }
-                    clsCommon.ShowError(ex, SetError("GetDataCol(string strTableName, string strColumns, string strCondition, string OrderByclause)", cmd.CommandText));
                 }
             }
             return null;
@@ -993,21 +1000,23 @@ namespace CoreApp
                 string str = string.Empty;
                 if (File.Exists("AppConfig/ServerConfig.sc"))
                 {
-                    StreamReader sw = new StreamReader("AppConfig/ServerConfig.sc");
-                    // if user is using encrypted connection string then decrypt it else just read it.
-                    if (_IsEncrypted)
+                    using (StreamReader sw = new StreamReader("AppConfig/ServerConfig.sc"))
                     {
-                        // Decrypt the encrypted connection string.
-                        str = ObjUtil.Decrypt(sw.ReadLine(), true);
-                        sw.Close();
-                        clsConnection_DAL.strConnectionString = str;
-                    }
-                    else
-                    {
-                        // Decrypt the encrypted connection string.
-                        str = sw.ReadLine();
-                        sw.Close();
-                        clsConnection_DAL.strConnectionString = str;
+                        // if user is using encrypted connection string then decrypt it else just read it.
+                        if (_IsEncrypted)
+                        {
+                            // Decrypt the encrypted connection string.
+                            str = ObjUtil.Decrypt(sw.ReadLine(), true);
+                            sw.Close();
+                            clsConnection_DAL.strConnectionString = str;
+                        }
+                        else
+                        {
+                            // Decrypt the encrypted connection string.
+                            str = sw.ReadLine();
+                            sw.Close();
+                            clsConnection_DAL.strConnectionString = str;
+                        }
                     }
                 }
                 else
@@ -1053,11 +1062,11 @@ namespace CoreApp
             {
                 return null;
             }
-            using (SqlCommand cmd = new SqlCommand())
+            using (SqlConnection Objcon = new SqlConnection())
             {
-                try
+                using (SqlCommand cmd = new SqlCommand())
                 {
-                    if (Objcon.State == ConnectionState.Closed || Objcon.State == ConnectionState.Broken)
+                    try
                     {
                         // if Connection object doest have the connection string then set the static connection string .
                         if (Objcon.ConnectionString.Trim().Length == 0)
@@ -1065,33 +1074,33 @@ namespace CoreApp
                             Objcon.ConnectionString = clsConnection_DAL.strConnectionString;
                         }
                         Objcon.Open();
-                    }
 
-                    DataTable dt = new DataTable();
-                    cmd.Connection = Objcon;
-                    // Transaction is in progress.
-                    if (ObjTrans != null)
-                    {
-                        cmd.Transaction = ObjTrans;
+                        DataTable dt = new DataTable();
+                        cmd.Connection = Objcon;
+                        // Transaction is in progress.
+                        if (ObjTrans != null)
+                        {
+                            cmd.Transaction = ObjTrans;
+                        }
+                        ObjDA = new SqlDataAdapter();
+                        cmd.CommandText = strQuery;
+                        cmd.CommandTimeout = pTimeout;
+                        _CommandText = cmd.CommandText;
+                        ObjDA.SelectCommand = cmd;
+                        ObjDA.Fill(dt);
+                        //CloseConnection();
+                        return dt;
                     }
-                    ObjDA = new SqlDataAdapter();
-                    cmd.CommandText = strQuery;
-                    cmd.CommandTimeout = pTimeout;
-                    _CommandText = cmd.CommandText;
-                    ObjDA.SelectCommand = cmd;
-                    ObjDA.Fill(dt);
-                    CloseConnection();
-                    return dt;
-                }
-                catch (Exception ex)
-                {
-                    CloseConnection();
-                    if (clsUtility.IsAutoLog)
+                    catch (Exception ex)
                     {
-                        string temp = "ExecuteSelectStatement strQuery: " + strQuery + " ";
-                        ObjUtil.WriteToFile(temp + ex.ToString(), "Error");
+                        //CloseConnection();
+                        if (clsUtility.IsAutoLog)
+                        {
+                            string temp = "ExecuteSelectStatement strQuery: " + strQuery + " ";
+                            ObjUtil.WriteToFile(temp + ex.ToString(), "Error");
+                        }
+                        clsCommon.ShowError(ex, SetError("ExecuteSelectStatement(string strQuery)", cmd.CommandText));
                     }
-                    clsCommon.ShowError(ex, SetError("ExecuteSelectStatement(string strQuery)", cmd.CommandText));
                 }
             }
             return null;
@@ -1208,52 +1217,54 @@ namespace CoreApp
             {
                 return null;
             }
-            using (SqlCommand cmd = new SqlCommand())
+            using (SqlConnection Objcon = new SqlConnection())
             {
-                try
+                using (SqlCommand cmd = new SqlCommand())
                 {
-                    if (strQuery.ToLower().Contains("select") == false)
+                    try
                     {
-                        clsUtility.ShowErrorMessage("Select keyword is missing in the ExecuteSelectStatemen()." +
-                                                 "\nExecuteSelectStatemen() Executes the sql select statement and returns the data table." +
-                                                 "\nDon't write INSERT, UPDATED query in this method.\n Query :" + strQuery, "CoreApp");
-                        return null;
-                    }
-                    if (Objcon.State == ConnectionState.Closed || Objcon.State == ConnectionState.Broken)
-                    {
+                        if (strQuery.ToLower().Contains("select") == false)
+                        {
+                            clsUtility.ShowErrorMessage("Select keyword is missing in the ExecuteSelectStatemen()." +
+                                                     "\nExecuteSelectStatemen() Executes the sql select statement and returns the data table." +
+                                                     "\nDon't write INSERT, UPDATED query in this method.\n Query :" + strQuery, "CoreApp");
+                            return null;
+                        }
+
                         // if Connection object doest have the connection string then set the static connection string .
                         if (Objcon.ConnectionString.Trim().Length == 0)
                         {
                             Objcon.ConnectionString = clsConnection_DAL.strConnectionString;
                         }
                         Objcon.Open();
+
+                        Objcon.ChangeDatabase(Database);
+                        DataTable dt = new DataTable();
+                        cmd.Connection = Objcon;
+                        // Transaction is in progress.
+                        if (ObjTrans != null)
+                        {
+                            cmd.Transaction = ObjTrans;
+                        }
+                        ObjDA = new SqlDataAdapter();
+                        cmd.CommandText = strQuery;
+                        cmd.CommandTimeout = pTimeout;
+                        _CommandText = cmd.CommandText;
+                        ObjDA.SelectCommand = cmd;
+                        ObjDA.Fill(dt);
+                        //CloseConnection();
+                        return dt;
                     }
-                    Objcon.ChangeDatabase(Database);
-                    DataTable dt = new DataTable();
-                    cmd.Connection = Objcon;
-                    // Transaction is in progress.
-                    if (ObjTrans != null)
+                    catch (Exception ex)
                     {
-                        cmd.Transaction = ObjTrans;
+                        //CloseConnection();
+                        if (clsUtility.IsAutoLog)
+                        {
+                            string temp = "ExecuteSelectStatement strQuery: " + strQuery + " ";
+                            ObjUtil.WriteToFile(temp + ex.ToString(), "Error");
+                        }
+                        clsCommon.ShowError(ex, SetError("ExecuteSelectStatement(string strQuery)", cmd.CommandText));
                     }
-                    ObjDA = new SqlDataAdapter();
-                    cmd.CommandText = strQuery;
-                    cmd.CommandTimeout = pTimeout;
-                    _CommandText = cmd.CommandText;
-                    ObjDA.SelectCommand = cmd;
-                    ObjDA.Fill(dt);
-                    CloseConnection();
-                    return dt;
-                }
-                catch (Exception ex)
-                {
-                    CloseConnection();
-                    if (clsUtility.IsAutoLog)
-                    {
-                        string temp = "ExecuteSelectStatement strQuery: " + strQuery + " ";
-                        ObjUtil.WriteToFile(temp + ex.ToString(), "Error");
-                    }
-                    clsCommon.ShowError(ex, SetError("ExecuteSelectStatement(string strQuery)", cmd.CommandText));
                 }
             }
             return null;
@@ -1274,11 +1285,11 @@ namespace CoreApp
                 return -1;
             }
             int result = 0;
-            using (SqlCommand cmd = new SqlCommand())
+            using (SqlConnection Objcon = new SqlConnection())
             {
-                try
+                using (SqlCommand cmd = new SqlCommand())
                 {
-                    if (Objcon.State == ConnectionState.Closed || Objcon.State == ConnectionState.Broken)
+                    try
                     {
                         // if Connection object doest have the connection string then set the static connection string .
                         if (Objcon.ConnectionString.Trim().Length == 0)
@@ -1286,41 +1297,41 @@ namespace CoreApp
                             Objcon.ConnectionString = clsConnection_DAL.strConnectionString;
                         }
                         Objcon.Open();
-                    }
 
-                    // Transaction is in progress.
-                    if (ObjTrans != null)
-                    {
-                        cmd.Transaction = ObjTrans;
+                        // Transaction is in progress.
+                        if (ObjTrans != null)
+                        {
+                            cmd.Transaction = ObjTrans;
+                        }
+                        cmd.CommandText = strQuery;
+                        cmd.Connection = Objcon;
+                        cmd.CommandTimeout = pTimeout;
+                        _CommandText = cmd.CommandText;
+                        result = cmd.ExecuteNonQuery();
+                        //CloseConnection();
+                        // if connection is closed after executing the query then it means query has been executed properly.
+                        // in this case if result it -1 then set it to 0
+                        if (result == -1)
+                        {
+                            result = 0;
+                        }
                     }
-                    cmd.CommandText = strQuery;
-                    cmd.Connection = Objcon;
-                    cmd.CommandTimeout = pTimeout;
-                    _CommandText = cmd.CommandText;
-                    result = cmd.ExecuteNonQuery();
-                    CloseConnection();
-                    // if connection is closed after executing the query then it means query has been executed properly.
-                    // in this case if result it -1 then set it to 0
-                    if (result == -1)
+                    catch (Exception ex)
                     {
-                        result = 0;
+                        if (ObjTrans != null)
+                        {
+                            IsRollBack = true;
+                            ObjTrans.Rollback();
+                        }
+                        //CloseConnection();
+                        if (clsUtility.IsAutoLog)
+                        {
+                            string temp = "ExecuteNonQuery strQuery: " + strQuery + " ";
+                            ObjUtil.WriteToFile(temp + ex.ToString(), "Error");
+                        }
+                        clsCommon.ShowError(ex, SetError("ExecuteNonQuery(string strQuery)", cmd.CommandText));
+                        return -1;
                     }
-                }
-                catch (Exception ex)
-                {
-                    if (ObjTrans != null)
-                    {
-                        IsRollBack = true;
-                        ObjTrans.Rollback();
-                    }
-                    CloseConnection();
-                    if (clsUtility.IsAutoLog)
-                    {
-                        string temp = "ExecuteNonQuery strQuery: " + strQuery + " ";
-                        ObjUtil.WriteToFile(temp + ex.ToString(), "Error");
-                    }
-                    clsCommon.ShowError(ex, SetError("ExecuteNonQuery(string strQuery)", cmd.CommandText));
-                    return -1;
                 }
             }
             return result;
@@ -1341,11 +1352,11 @@ namespace CoreApp
                 return -1;
             }
             object result = null;
-            using (SqlCommand cmd = new SqlCommand())
+            using (SqlConnection Objcon = new SqlConnection())
             {
-                try
+                using (SqlCommand cmd = new SqlCommand())
                 {
-                    if (Objcon.State == ConnectionState.Closed || Objcon.State == ConnectionState.Broken)
+                    try
                     {
                         // if Connection object doest have the connection string then set the static connection string .
                         if (Objcon.ConnectionString.Trim().Length == 0)
@@ -1353,35 +1364,35 @@ namespace CoreApp
                             Objcon.ConnectionString = clsConnection_DAL.strConnectionString;
                         }
                         Objcon.Open();
-                    }
 
-                    // Transaction is in progress.
-                    if (ObjTrans != null)
-                    {
-                        cmd.Transaction = ObjTrans;
-                    }
-                    cmd.CommandText = strQuery;
-                    cmd.Connection = Objcon;
-                    cmd.CommandTimeout = pTimeout;
-                    _CommandText = cmd.CommandText;
-                    result = cmd.ExecuteScalar();
-                    CloseConnection();
+                        // Transaction is in progress.
+                        if (ObjTrans != null)
+                        {
+                            cmd.Transaction = ObjTrans;
+                        }
+                        cmd.CommandText = strQuery;
+                        cmd.Connection = Objcon;
+                        cmd.CommandTimeout = pTimeout;
+                        _CommandText = cmd.CommandText;
+                        result = cmd.ExecuteScalar();
+                        //CloseConnection();
 
-                }
-                catch (Exception ex)
-                {
-                    if (ObjTrans != null)
-                    {
-                        IsRollBack = true;
-                        ObjTrans.Rollback();
                     }
-                    CloseConnection();
-                    if (clsUtility.IsAutoLog)
+                    catch (Exception ex)
                     {
-                        string temp = "ExecuteScalar strQuery: " + strQuery + " ";
-                        ObjUtil.WriteToFile(temp + ex.ToString(), "Error");
+                        if (ObjTrans != null)
+                        {
+                            IsRollBack = true;
+                            ObjTrans.Rollback();
+                        }
+                        //CloseConnection();
+                        if (clsUtility.IsAutoLog)
+                        {
+                            string temp = "ExecuteScalar strQuery: " + strQuery + " ";
+                            ObjUtil.WriteToFile(temp + ex.ToString(), "Error");
+                        }
+                        clsCommon.ShowError(ex, SetError("ExecuteScalar(string strQuery)", cmd.CommandText));
                     }
-                    clsCommon.ShowError(ex, SetError("ExecuteScalar(string strQuery)", cmd.CommandText));
                 }
             }
             return result;
@@ -1405,12 +1416,12 @@ namespace CoreApp
             }
             //int result = 0;
             int result = -1; //for checking LAN connectivity is there or not?
-            using (SqlCommand cmd = new SqlCommand())
+            using (SqlConnection Objcon = new SqlConnection())
             {
-                object o = null;
-                try
+                using (SqlCommand cmd = new SqlCommand())
                 {
-                    if (Objcon.State == ConnectionState.Closed || Objcon.State == ConnectionState.Broken)
+                    object o = null;
+                    try
                     {
                         // if Connection object doest have the connection string then set the static connection string .
                         if (Objcon.ConnectionString.Trim().Length == 0)
@@ -1418,42 +1429,43 @@ namespace CoreApp
                             Objcon.ConnectionString = clsConnection_DAL.strConnectionString;
                         }
                         Objcon.Open();
+
+                        // Transaction is in progress.
+                        if (ObjTrans != null)
+                        {
+                            cmd.Transaction = ObjTrans;
+                        }
+                        cmd.CommandText = strQuery;
+                        _CommandText = cmd.CommandText;
+                        cmd.Connection = Objcon;
+                        cmd.CommandTimeout = pTimeout;
+                        o = cmd.ExecuteScalar();
+                        if (o != null)
+                        {
+                            result = Convert.ToInt32(o);
+                        }
+                        else
+                        {
+                            return 0;
+                        }
+                        //CloseConnection();
                     }
-                    // Transaction is in progress.
-                    if (ObjTrans != null)
+                    catch (Exception ex)
                     {
-                        cmd.Transaction = ObjTrans;
+                        if (ObjTrans != null)
+                        {
+                            result = -1;
+                            IsRollBack = true;
+                            ObjTrans.Rollback();
+                        }
+                        //CloseConnection();
+                        if (clsUtility.IsAutoLog)
+                        {
+                            string temp = "ExecuteScalarInt strQuery: " + strQuery + " ";
+                            ObjUtil.WriteToFile(temp + ex.ToString(), "Error");
+                        }
+                        clsCommon.ShowError(ex, SetError("ExecuteScalarInt(string strQuery)", cmd.CommandText));
                     }
-                    cmd.CommandText = strQuery;
-                    _CommandText = cmd.CommandText;
-                    cmd.Connection = Objcon;
-                    cmd.CommandTimeout = pTimeout;
-                    o = cmd.ExecuteScalar();
-                    if (o != null)
-                    {
-                        result = Convert.ToInt32(o);
-                    }
-                    else
-                    {
-                        return 0;
-                    }
-                    CloseConnection();
-                }
-                catch (Exception ex)
-                {
-                    if (ObjTrans != null)
-                    {
-                        result = -1;
-                        IsRollBack = true;
-                        ObjTrans.Rollback();
-                    }
-                    CloseConnection();
-                    if (clsUtility.IsAutoLog)
-                    {
-                        string temp = "ExecuteScalarInt strQuery: " + strQuery + " ";
-                        ObjUtil.WriteToFile(temp + ex.ToString(), "Error");
-                    }
-                    clsCommon.ShowError(ex, SetError("ExecuteScalarInt(string strQuery)", cmd.CommandText));
                 }
             }
             return result;
@@ -1469,11 +1481,11 @@ namespace CoreApp
         public int CountRecords(string strTableName, string strCondition)
         {
             object result = null;
-            using (SqlCommand cmd = new SqlCommand())
+            using (SqlConnection Objcon = new SqlConnection())
             {
-                try
+                using (SqlCommand cmd = new SqlCommand())
                 {
-                    if (Objcon.State == ConnectionState.Closed || Objcon.State == ConnectionState.Broken)
+                    try
                     {
                         // if Connection object doest have the connection string then set the static connection string .
                         if (Objcon.ConnectionString.Trim().Length == 0)
@@ -1481,40 +1493,41 @@ namespace CoreApp
                             Objcon.ConnectionString = clsConnection_DAL.strConnectionString;
                         }
                         Objcon.Open();
+
+                        //Replace the where keyword by empty string.
+                        if (strCondition != null)
+                        {
+                            strCondition = strCondition.Replace("Where", " ");
+                        }
+                        cmd.CommandText = "SELECT COUNT(1) FROM " + strTableName + " WITH(NOLOCK) WHERE " + strCondition;
+                        cmd.Connection = Objcon;
+                        // Transaction is in progress.
+                        if (ObjTrans != null)
+                        {
+                            cmd.Transaction = ObjTrans;
+                        }
+                        _CommandText = cmd.CommandText;
+                        result = cmd.ExecuteScalar();
+                        //CloseConnection();
+                        if (result != null)
+                        {
+                            return Convert.ToInt32(result);
+                        }
+                        else
+                        {
+                            return 0;
+                        }
                     }
-                    //Replace the where keyword by empty string.
-                    if (strCondition != null)
+                    catch (Exception ex)
                     {
-                        strCondition = strCondition.Replace("Where", " ");
+                        //CloseConnection();
+                        if (clsUtility.IsAutoLog)
+                        {
+                            string temp = "CountRecords strTableName: " + strTableName + " Query: " + cmd.CommandText + " ";
+                            ObjUtil.WriteToFile(temp + ex.ToString(), "Error");
+                        }
+                        clsCommon.ShowError(ex, SetError("CountRecords(string strTableName, string strCondition)", cmd.CommandText));
                     }
-                    cmd.CommandText = "SELECT COUNT(1) FROM " + strTableName + " WITH(NOLOCK) WHERE " + strCondition;
-                    cmd.Connection = Objcon;
-                    // Transaction is in progress.
-                    if (ObjTrans != null)
-                    {
-                        cmd.Transaction = ObjTrans;
-                    }
-                    _CommandText = cmd.CommandText;
-                    result = cmd.ExecuteScalar();
-                    CloseConnection();
-                    if (result != null)
-                    {
-                        return Convert.ToInt32(result);
-                    }
-                    else
-                    {
-                        return 0;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    CloseConnection();
-                    if (clsUtility.IsAutoLog)
-                    {
-                        string temp = "CountRecords strTableName: " + strTableName + " Query: " + cmd.CommandText + " ";
-                        ObjUtil.WriteToFile(temp + ex.ToString(), "Error");
-                    }
-                    clsCommon.ShowError(ex, SetError("CountRecords(string strTableName, string strCondition)", cmd.CommandText));
                 }
             }
             return 0;
@@ -1528,11 +1541,11 @@ namespace CoreApp
         public int CountRecords(string strTableName)
         {
             object result = null;
-            using (SqlCommand cmd = new SqlCommand())
+            using (SqlConnection Objcon = new SqlConnection())
             {
-                try
+                using (SqlCommand cmd = new SqlCommand())
                 {
-                    if (Objcon.State == ConnectionState.Closed || Objcon.State == ConnectionState.Broken)
+                    try
                     {
                         // if Connection object doest have the connection string then set the static connection string .
                         if (Objcon.ConnectionString.Trim().Length == 0)
@@ -1540,36 +1553,36 @@ namespace CoreApp
                             Objcon.ConnectionString = clsConnection_DAL.strConnectionString;
                         }
                         Objcon.Open();
-                    }
 
-                    cmd.CommandText = "SELECT COUNT(1) FROM " + strTableName + " WITH(NOLOCK)";
-                    cmd.Connection = Objcon;
-                    // Transaction is in progress.
-                    if (ObjTrans != null)
-                    {
-                        cmd.Transaction = ObjTrans;
+                        cmd.CommandText = "SELECT COUNT(1) FROM " + strTableName + " WITH(NOLOCK)";
+                        cmd.Connection = Objcon;
+                        // Transaction is in progress.
+                        if (ObjTrans != null)
+                        {
+                            cmd.Transaction = ObjTrans;
+                        }
+                        _CommandText = cmd.CommandText;
+                        result = cmd.ExecuteScalar();
+                        //CloseConnection();
+                        if (result != null)
+                        {
+                            return Convert.ToInt32(result);
+                        }
+                        else
+                        {
+                            return 0;
+                        }
                     }
-                    _CommandText = cmd.CommandText;
-                    result = cmd.ExecuteScalar();
-                    CloseConnection();
-                    if (result != null)
+                    catch (Exception ex)
                     {
-                        return Convert.ToInt32(result);
+                        //CloseConnection();
+                        if (clsUtility.IsAutoLog)
+                        {
+                            string temp = "CountRecords strTableName: " + strTableName + " Query: " + cmd.CommandText + " ";
+                            ObjUtil.WriteToFile(temp + ex.ToString(), "Error");
+                        }
+                        clsCommon.ShowError(ex, SetError("CountRecords(string strTableName)", cmd.CommandText));
                     }
-                    else
-                    {
-                        return 0;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    CloseConnection();
-                    if (clsUtility.IsAutoLog)
-                    {
-                        string temp = "CountRecords strTableName: " + strTableName + " Query: " + cmd.CommandText + " ";
-                        ObjUtil.WriteToFile(temp + ex.ToString(), "Error");
-                    }
-                    clsCommon.ShowError(ex, SetError("CountRecords(string strTableName)", cmd.CommandText));
                 }
             }
             return 0;
@@ -1584,11 +1597,11 @@ namespace CoreApp
         /// <returns>Returns True if backup operation is successfully completed  else returns false.</returns>
         public bool BackupDatabase(string strDatabaseName, string strPath, string strBackupFileName)
         {
-            using (SqlCommand cmd = new SqlCommand())
+            using (SqlConnection Objcon = new SqlConnection())
             {
-                try
+                using (SqlCommand cmd = new SqlCommand())
                 {
-                    if (Objcon.State == ConnectionState.Closed || Objcon.State == ConnectionState.Broken)
+                    try
                     {
                         // if Connection object doest have the connection string then set the static connection string .
                         if (Objcon.ConnectionString.Trim().Length == 0)
@@ -1596,24 +1609,25 @@ namespace CoreApp
                             Objcon.ConnectionString = clsConnection_DAL.strConnectionString;
                         }
                         Objcon.Open();
+
+                        cmd.CommandText = "BACKUP DATABASE " + strDatabaseName + " TO DISK='" + strPath + @"\" + strBackupFileName.Replace(".bak", "") + ".bak'";
+                        _CommandText = cmd.CommandText;
+                        cmd.Connection = Objcon;
+                        int result = cmd.ExecuteNonQuery();
+                        //CloseConnection();
+                        return true;
                     }
-                    cmd.CommandText = "BACKUP DATABASE " + strDatabaseName + " TO DISK='" + strPath + @"\" + strBackupFileName.Replace(".bak", "") + ".bak'";
-                    _CommandText = cmd.CommandText;
-                    cmd.Connection = Objcon;
-                    int result = cmd.ExecuteNonQuery();
-                    CloseConnection();
-                    return true;
-                }
-                catch (Exception ex)
-                {
-                    CloseConnection();
-                    if (clsUtility.IsAutoLog)
+                    catch (Exception ex)
                     {
-                        string temp = "BackupDatabase strDatabaseName: " + strDatabaseName + " strPath: " + strPath + " strBackupFileName: " + strBackupFileName + " Query: " + cmd.CommandText + " ";
-                        ObjUtil.WriteToFile(temp + ex.ToString(), "Error");
+                        //CloseConnection();
+                        if (clsUtility.IsAutoLog)
+                        {
+                            string temp = "BackupDatabase strDatabaseName: " + strDatabaseName + " strPath: " + strPath + " strBackupFileName: " + strBackupFileName + " Query: " + cmd.CommandText + " ";
+                            ObjUtil.WriteToFile(temp + ex.ToString(), "Error");
+                        }
+                        clsCommon.ShowError(ex, SetError("BackupDatabase(string strDatabaseName, string strPath, string strBackupFileName)", cmd.CommandText));
+                        return false;
                     }
-                    clsCommon.ShowError(ex, SetError("BackupDatabase(string strDatabaseName, string strPath, string strBackupFileName)", cmd.CommandText));
-                    return false;
                 }
             }
         }
@@ -1626,11 +1640,11 @@ namespace CoreApp
         /// <returns>Returns true if backup operation is successful else returns false.</returns>
         public bool RestoreDataBase(string strDatabaseName, string strPath)
         {
-            using (SqlCommand cmd = new SqlCommand())
+            using (SqlConnection Objcon = new SqlConnection())
             {
-                try
+                using (SqlCommand cmd = new SqlCommand())
                 {
-                    if (Objcon.State == ConnectionState.Closed || Objcon.State == ConnectionState.Broken)
+                    try
                     {
                         // if Connection object doest have the connection string then set the static connection string .
                         if (Objcon.ConnectionString.Trim().Length == 0)
@@ -1638,19 +1652,20 @@ namespace CoreApp
                             Objcon.ConnectionString = clsConnection_DAL.strConnectionString;
                         }
                         Objcon.Open();
+
+                        cmd.CommandText = "RESTORE DATABASE " + strDatabaseName + " FROM DISK='" + strPath + "' WITH REPLACE";
+                        _CommandText = cmd.CommandText;
+                        cmd.Connection = Objcon;
+                        int result = cmd.ExecuteNonQuery();
+                        //CloseConnection();
+                        return true;
                     }
-                    cmd.CommandText = "RESTORE DATABASE " + strDatabaseName + " FROM DISK='" + strPath + "' WITH REPLACE";
-                    _CommandText = cmd.CommandText;
-                    cmd.Connection = Objcon;
-                    int result = cmd.ExecuteNonQuery();
-                    CloseConnection();
-                    return true;
-                }
-                catch (Exception ex)
-                {
-                    CloseConnection();
-                    clsCommon.ShowError(ex, SetError("RestoreDataBase(string strDatabaseName, string strPath)", cmd.CommandText));
-                    return false;
+                    catch (Exception ex)
+                    {
+                        //CloseConnection();
+                        clsCommon.ShowError(ex, SetError("RestoreDataBase(string strDatabaseName, string strPath)", cmd.CommandText));
+                        return false;
+                    }
                 }
             }
         }
@@ -1759,11 +1774,11 @@ namespace CoreApp
         /// <returns>DataTable containing Column information</returns>
         public DataTable GetColumns(string strDatabase, string strTable)
         {
-            using (SqlCommand cmd = new SqlCommand())
+            using (SqlConnection Objcon = new SqlConnection())
             {
-                try
+                using (SqlCommand cmd = new SqlCommand())
                 {
-                    if (Objcon.State == ConnectionState.Closed || Objcon.State == ConnectionState.Broken)
+                    try
                     {
                         // if Connection object doest have the connection string then set the static connection string .
                         if (Objcon.ConnectionString.Trim().Length == 0)
@@ -1771,31 +1786,32 @@ namespace CoreApp
                             Objcon.ConnectionString = clsConnection_DAL.strConnectionString;
                         }
                         Objcon.Open();
+
+                        DataTable dt = new DataTable();
+                        cmd.Connection = Objcon;
+                        // Transaction is in progress.
+                        if (ObjTrans != null)
+                        {
+                            cmd.Transaction = ObjTrans;
+                        }
+                        ObjDA = new SqlDataAdapter();
+                        cmd.CommandText = "SELECT * FROM " + strDatabase + ".INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='" + strTable + "'";
+                        _CommandText = cmd.CommandText;
+                        ObjDA.SelectCommand = cmd;
+                        ObjDA.Fill(dt);
+                        //CloseConnection();
+                        return dt;
                     }
-                    DataTable dt = new DataTable();
-                    cmd.Connection = Objcon;
-                    // Transaction is in progress.
-                    if (ObjTrans != null)
+                    catch (Exception ex)
                     {
-                        cmd.Transaction = ObjTrans;
+                        //CloseConnection();
+                        if (clsUtility.IsAutoLog)
+                        {
+                            string temp = "GetColumns strDatabase: " + strDatabase + " strTable: " + strTable + " Query: " + cmd.CommandText + " ";
+                            ObjUtil.WriteToFile(temp + ex.ToString(), "Error");
+                        }
+                        clsCommon.ShowError(ex, SetError("GetColumns(string strDatabase, string strTable)", cmd.CommandText));
                     }
-                    ObjDA = new SqlDataAdapter();
-                    cmd.CommandText = "SELECT * FROM " + strDatabase + ".INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='" + strTable + "'";
-                    _CommandText = cmd.CommandText;
-                    ObjDA.SelectCommand = cmd;
-                    ObjDA.Fill(dt);
-                    CloseConnection();
-                    return dt;
-                }
-                catch (Exception ex)
-                {
-                    CloseConnection();
-                    if (clsUtility.IsAutoLog)
-                    {
-                        string temp = "GetColumns strDatabase: " + strDatabase + " strTable: " + strTable + " Query: " + cmd.CommandText + " ";
-                        ObjUtil.WriteToFile(temp + ex.ToString(), "Error");
-                    }
-                    clsCommon.ShowError(ex, SetError("GetColumns(string strDatabase, string strTable)", cmd.CommandText));
                 }
             }
             return null;
@@ -1895,7 +1911,8 @@ namespace CoreApp
 
                 if (Objcon.State == ConnectionState.Open || Objcon.State == ConnectionState.Broken)
                 {
-                    Objcon.Close();
+                    if (Objcon != null)
+                        Objcon.Close();
                 }
             }
             catch (Exception ex)
@@ -2104,11 +2121,11 @@ namespace CoreApp
                 dtOutputParm.Clear();
             }
             DataSet ds = new DataSet();
-            using (SqlCommand cmd = new SqlCommand())
+            using (SqlConnection Objcon = new SqlConnection())
             {
-                try
+                using (SqlCommand cmd = new SqlCommand())
                 {
-                    if (Objcon.State == ConnectionState.Closed || Objcon.State == ConnectionState.Broken)
+                    try
                     {
                         // if Connection object doest have the connection string then set the static connection string .
                         if (Objcon.ConnectionString.Trim().Length == 0)
@@ -2116,67 +2133,67 @@ namespace CoreApp
                             Objcon.ConnectionString = clsConnection_DAL.strConnectionString;
                         }
                         Objcon.Open();
-                    }
 
-                    // Transaction is in progress.
-                    if (ObjTrans != null)
-                    {
-                        cmd.Transaction = ObjTrans;
-                    }
-                    ObjDA = new SqlDataAdapter();
-                    cmd.CommandText = strStoreProcedureName;
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Connection = Objcon;
-                    cmd.CommandTimeout = pTimeout;
-                    // if sp is called with parameters.
-                    if (lstSQLParameter.Count > 0)
-                    {
-                        SqlParameter[] p = lstSQLParameter.ToArray();
-                        cmd.Parameters.AddRange(p);
-                    }
-                    ObjDA.SelectCommand = cmd;
-                    ObjDA.Fill(ds);
-
-                    // check if there is any output parameter.
-                    for (int i = 0; i < cmd.Parameters.Count; i++)
-                    {
-                        if (cmd.Parameters[i].Direction == ParameterDirection.Output)
+                        // Transaction is in progress.
+                        if (ObjTrans != null)
                         {
-                            InitOutputTable();
-                            AddRowToOutputParm(cmd.Parameters[i].ParameterName, cmd.Parameters[i].Value);
+                            cmd.Transaction = ObjTrans;
                         }
-                    }
-                    CloseConnection();
-                }
-                catch (Exception ex)
-                {
-                    if (ObjTrans != null)
-                    {
-                        IsRollBack = true;
-                        ObjTrans.Rollback();
-                    }
-                    string strMethod = System.Reflection.MethodBase.GetCurrentMethod().Name;
-                    CloseConnection();
-                    if (clsUtility.IsAutoLog)
-                    {
-                        string strpara = string.Empty;
+                        ObjDA = new SqlDataAdapter();
+                        cmd.CommandText = strStoreProcedureName;
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Connection = Objcon;
+                        cmd.CommandTimeout = pTimeout;
+                        // if sp is called with parameters.
                         if (lstSQLParameter.Count > 0)
                         {
-                            //SqlParameter[] p = lstSQLParameter.ToArray();
-                            //for (int i = 0; i < p.Length; i++)
-                            //{
-                            //    strpara += p[i].ParameterName + " : " + p[i].Value + "\n";
-                            //}
-                            strpara = "ParameterName : " + strColumns + " Values : " + strValues;
+                            SqlParameter[] p = lstSQLParameter.ToArray();
+                            cmd.Parameters.AddRange(p);
                         }
-                        string temp = "ExecuteStoreProcedure_Get strStoreProcedureName: " + strStoreProcedureName + " ";
-                        ObjUtil.WriteToFile(temp + "\n Parameters " + strpara + ex.ToString(), "Error");
+                        ObjDA.SelectCommand = cmd;
+                        ObjDA.Fill(ds);
+
+                        // check if there is any output parameter.
+                        for (int i = 0; i < cmd.Parameters.Count; i++)
+                        {
+                            if (cmd.Parameters[i].Direction == ParameterDirection.Output)
+                            {
+                                InitOutputTable();
+                                AddRowToOutputParm(cmd.Parameters[i].ParameterName, cmd.Parameters[i].Value);
+                            }
+                        }
+                        //CloseConnection();
                     }
-                    clsCommon.ShowError(ex, SetError("ExecuteStoreProcedure_Get(string strStoreProcedureName)", cmd.CommandText));
+                    catch (Exception ex)
+                    {
+                        if (ObjTrans != null)
+                        {
+                            IsRollBack = true;
+                            ObjTrans.Rollback();
+                        }
+                        string strMethod = System.Reflection.MethodBase.GetCurrentMethod().Name;
+                        //CloseConnection();
+                        if (clsUtility.IsAutoLog)
+                        {
+                            string strpara = string.Empty;
+                            if (lstSQLParameter.Count > 0)
+                            {
+                                //SqlParameter[] p = lstSQLParameter.ToArray();
+                                //for (int i = 0; i < p.Length; i++)
+                                //{
+                                //    strpara += p[i].ParameterName + " : " + p[i].Value + "\n";
+                                //}
+                                strpara = "ParameterName : " + strColumns + " Values : " + strValues;
+                            }
+                            string temp = "ExecuteStoreProcedure_Get strStoreProcedureName: " + strStoreProcedureName + " ";
+                            ObjUtil.WriteToFile(temp + "\n Parameters " + strpara + ex.ToString(), "Error");
+                        }
+                        clsCommon.ShowError(ex, SetError("ExecuteStoreProcedure_Get(string strStoreProcedureName)", cmd.CommandText));
+                        ResetData();
+                        return null;
+                    }
                     ResetData();
-                    return null;
                 }
-                ResetData();
             }
             return ds;
         }
@@ -2200,11 +2217,11 @@ namespace CoreApp
                 ResetData();
                 result = false;
             }
-            using (SqlCommand cmd = new SqlCommand())
+            using (SqlConnection Objcon = new SqlConnection())
             {
-                try
+                using (SqlCommand cmd = new SqlCommand())
                 {
-                    if (Objcon.State == ConnectionState.Closed || Objcon.State == ConnectionState.Broken)
+                    try
                     {
                         // if Connection object doest have the connection string then set the static connection string .
                         if (Objcon.ConnectionString.Trim().Length == 0)
@@ -2212,66 +2229,66 @@ namespace CoreApp
                             Objcon.ConnectionString = clsConnection_DAL.strConnectionString;
                         }
                         Objcon.Open();
-                    }
 
-                    // Transaction is in progress.
-                    if (ObjTrans != null)
-                    {
-                        cmd.Transaction = ObjTrans;
-                    }
-                    cmd.CommandText = strStoreProcedureName;
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Connection = Objcon;
-                    cmd.CommandTimeout = pTimeout;
-                    // if sp is called with parameters.
-                    if (lstSQLParameter.Count > 0)
-                    {
-                        SqlParameter[] p = lstSQLParameter.ToArray();
-                        cmd.Parameters.AddRange(p);
-                    }
-                    cmd.ExecuteNonQuery();
-
-                    // check if there is any output parameter.
-                    for (int i = 0; i < cmd.Parameters.Count; i++)
-                    {
-                        if (cmd.Parameters[i].Direction == ParameterDirection.Output)
+                        // Transaction is in progress.
+                        if (ObjTrans != null)
                         {
-                            InitOutputTable();
-                            AddRowToOutputParm(cmd.Parameters[i].ParameterName, cmd.Parameters[i].Value);
+                            cmd.Transaction = ObjTrans;
                         }
-                    }
-                    result = true;
-                    CloseConnection();
-                }
-                catch (Exception ex)
-                {
-                    if (ObjTrans != null)
-                    {
-                        IsRollBack = true;
-                        ObjTrans.Rollback();
-                    }
-                    string strMethod = System.Reflection.MethodBase.GetCurrentMethod().Name;
-                    CloseConnection();
-                    if (clsUtility.IsAutoLog)
-                    {
-                        string strpara = string.Empty;
+                        cmd.CommandText = strStoreProcedureName;
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Connection = Objcon;
+                        cmd.CommandTimeout = pTimeout;
+                        // if sp is called with parameters.
                         if (lstSQLParameter.Count > 0)
                         {
-                            //SqlParameter[] p = lstSQLParameter.ToArray();
-                            //for (int i = 0; i < p.Length; i++)
-                            //{
-                            //    strpara += p[i].ParameterName + " : " + p[i].Value + "\n";
-                            //}
-                            strpara = "ParameterName : " + strColumns + " Values : " + strValues;
+                            SqlParameter[] p = lstSQLParameter.ToArray();
+                            cmd.Parameters.AddRange(p);
                         }
-                        string temp = "ExecuteStoreProcedure_DML strStoreProcedureName: " + strStoreProcedureName + " ";
-                        ObjUtil.WriteToFile(temp + "\n Parameters " + strpara + ex.ToString(), "Error");
+                        cmd.ExecuteNonQuery();
+
+                        // check if there is any output parameter.
+                        for (int i = 0; i < cmd.Parameters.Count; i++)
+                        {
+                            if (cmd.Parameters[i].Direction == ParameterDirection.Output)
+                            {
+                                InitOutputTable();
+                                AddRowToOutputParm(cmd.Parameters[i].ParameterName, cmd.Parameters[i].Value);
+                            }
+                        }
+                        result = true;
+                        //CloseConnection();
                     }
-                    clsCommon.ShowError(ex, SetError("ExecuteStoreProcedure_DML(string strStoreProcedureName)", cmd.CommandText));
+                    catch (Exception ex)
+                    {
+                        if (ObjTrans != null)
+                        {
+                            IsRollBack = true;
+                            ObjTrans.Rollback();
+                        }
+                        string strMethod = System.Reflection.MethodBase.GetCurrentMethod().Name;
+                        //CloseConnection();
+                        if (clsUtility.IsAutoLog)
+                        {
+                            string strpara = string.Empty;
+                            if (lstSQLParameter.Count > 0)
+                            {
+                                //SqlParameter[] p = lstSQLParameter.ToArray();
+                                //for (int i = 0; i < p.Length; i++)
+                                //{
+                                //    strpara += p[i].ParameterName + " : " + p[i].Value + "\n";
+                                //}
+                                strpara = "ParameterName : " + strColumns + " Values : " + strValues;
+                            }
+                            string temp = "ExecuteStoreProcedure_DML strStoreProcedureName: " + strStoreProcedureName + " ";
+                            ObjUtil.WriteToFile(temp + "\n Parameters " + strpara + ex.ToString(), "Error");
+                        }
+                        clsCommon.ShowError(ex, SetError("ExecuteStoreProcedure_DML(string strStoreProcedureName)", cmd.CommandText));
+                        ResetData();
+                        result = false;
+                    }
                     ResetData();
-                    result = false;
                 }
-                ResetData();
             }
             return result;
         }
