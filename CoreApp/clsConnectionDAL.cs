@@ -21,12 +21,20 @@ namespace CoreApp
         string _CommandText;
         bool IsRollBack = false;
         int Counter = 0;
+
+        /// <summary>
+        /// SQL command timeout
+        /// </summary>
         public int pTimeout = 2000;
+
         string strColumns;
         string strValues;
         // List for storing sql parameter.
         char[] c1 = new char[2];
 
+        /// <summary>
+        /// Parameter Type
+        /// </summary>
         public enum ParamType
         {
             Input,
@@ -228,11 +236,19 @@ namespace CoreApp
                         clsCommon.ShowError(ex, SetError("DeleteData(string strTableName, string strCondition)", cmd.CommandText));
                         return -1;
                     }
+                    finally
+                    {
+                        Objcon.Close();
+                    }
                 }
             }
             return result;
         }
 
+        /// <summary>
+        /// return output as DataTable
+        /// </summary>
+        /// <returns></returns>
         public DataTable GetOutputParmData()
         {
             return dtOutputParm;
@@ -339,7 +355,11 @@ namespace CoreApp
                         ResetData();
                         return -1;
                     }
-                    ResetData();
+                    finally
+                    {
+                        Objcon.Close();
+                        ResetData();
+                    }
                 }
             }
             return result;
@@ -411,7 +431,11 @@ namespace CoreApp
                         ResetData();
                         return -1;
                     }
-                    ResetData();
+                    finally
+                    {
+                        Objcon.Close();
+                        ResetData();
+                    }
                 }
             }
             return result;
@@ -648,6 +672,10 @@ namespace CoreApp
                         }
                         clsCommon.ShowError(ex, SetError("GetData(string strTableName)", cmd.CommandText));
                     }
+                    finally
+                    {
+                        Objcon.Close();
+                    }
                 }
             }
             return null;
@@ -721,6 +749,10 @@ namespace CoreApp
                             ObjUtil.WriteToFile(temp + ex.ToString(), "Error");
                         }
                         clsCommon.ShowError(ex, SetError("GetData(string strTableName, string OrderByclause)", cmd.CommandText));
+                    }
+                    finally
+                    {
+                        Objcon.Close();
                     }
                 }
             }
@@ -804,6 +836,10 @@ namespace CoreApp
                         }
                         clsCommon.ShowError(ex, SetError("GetData(string strTableName, string strCondition, string OrderByclause)", cmd.CommandText));
                     }
+                    finally
+                    {
+                        Objcon.Close();
+                    }
                 }
             }
             return null;
@@ -877,6 +913,10 @@ namespace CoreApp
                             ObjUtil.WriteToFile(temp + ex.ToString(), "Error");
                         }
                         clsCommon.ShowError(ex, SetError("GetDataCol(string strTableName, string strColumns, string OrderByclause)", cmd.CommandText));
+                    }
+                    finally
+                    {
+                        Objcon.Close();
                     }
                 }
             }
@@ -960,6 +1000,10 @@ namespace CoreApp
                             ObjUtil.WriteToFile(temp + ex.ToString(), "Error");
                         }
                         clsCommon.ShowError(ex, SetError("GetDataCol(string strTableName, string strColumns, string strCondition, string OrderByclause)", cmd.CommandText));
+                    }
+                    finally
+                    {
+                        Objcon.Close();
                     }
                 }
             }
@@ -1100,6 +1144,10 @@ namespace CoreApp
                             ObjUtil.WriteToFile(temp + ex.ToString(), "Error");
                         }
                         clsCommon.ShowError(ex, SetError("ExecuteSelectStatement(string strQuery)", cmd.CommandText));
+                    }
+                    finally
+                    {
+                        Objcon.Close();
                     }
                 }
             }
@@ -1265,6 +1313,10 @@ namespace CoreApp
                         }
                         clsCommon.ShowError(ex, SetError("ExecuteSelectStatement(string strQuery)", cmd.CommandText));
                     }
+                    finally
+                    {
+                        Objcon.Close();
+                    }
                 }
             }
             return null;
@@ -1332,6 +1384,10 @@ namespace CoreApp
                         clsCommon.ShowError(ex, SetError("ExecuteNonQuery(string strQuery)", cmd.CommandText));
                         return -1;
                     }
+                    finally
+                    {
+                        Objcon.Close();
+                    }
                 }
             }
             return result;
@@ -1392,6 +1448,10 @@ namespace CoreApp
                             ObjUtil.WriteToFile(temp + ex.ToString(), "Error");
                         }
                         clsCommon.ShowError(ex, SetError("ExecuteScalar(string strQuery)", cmd.CommandText));
+                    }
+                    finally
+                    {
+                        Objcon.Close();
                     }
                 }
             }
@@ -1466,6 +1526,10 @@ namespace CoreApp
                         }
                         clsCommon.ShowError(ex, SetError("ExecuteScalarInt(string strQuery)", cmd.CommandText));
                     }
+                    finally
+                    {
+                        Objcon.Close();
+                    }
                 }
             }
             return result;
@@ -1528,6 +1592,10 @@ namespace CoreApp
                         }
                         clsCommon.ShowError(ex, SetError("CountRecords(string strTableName, string strCondition)", cmd.CommandText));
                     }
+                    finally
+                    {
+                        Objcon.Close();
+                    }
                 }
             }
             return 0;
@@ -1583,6 +1651,10 @@ namespace CoreApp
                         }
                         clsCommon.ShowError(ex, SetError("CountRecords(string strTableName)", cmd.CommandText));
                     }
+                    finally
+                    {
+                        Objcon.Close();
+                    }
                 }
             }
             return 0;
@@ -1628,6 +1700,10 @@ namespace CoreApp
                         clsCommon.ShowError(ex, SetError("BackupDatabase(string strDatabaseName, string strPath, string strBackupFileName)", cmd.CommandText));
                         return false;
                     }
+                    finally
+                    {
+                        Objcon.Close();
+                    }
                 }
             }
         }
@@ -1665,6 +1741,10 @@ namespace CoreApp
                         //CloseConnection();
                         clsCommon.ShowError(ex, SetError("RestoreDataBase(string strDatabaseName, string strPath)", cmd.CommandText));
                         return false;
+                    }
+                    finally
+                    {
+                        Objcon.Close();
                     }
                 }
             }
@@ -1729,11 +1809,11 @@ namespace CoreApp
         /// <returns>DataTable containing Table information.</returns>
         public DataTable GetTables(string strDatabseName)
         {
-            using (SqlCommand cmd = new SqlCommand())
+            using (SqlConnection Objcon = new SqlConnection())
             {
-                try
+                using (SqlCommand cmd = new SqlCommand())
                 {
-                    if (Objcon.State == ConnectionState.Closed || Objcon.State == ConnectionState.Broken)
+                    try
                     {
                         // if Connection object doest have the connection string then set the static connection string .
                         if (Objcon.ConnectionString.Trim().Length == 0)
@@ -1741,26 +1821,31 @@ namespace CoreApp
                             Objcon.ConnectionString = clsConnection_DAL.strConnectionString;
                         }
                         Objcon.Open();
+
+                        DataTable dt = new DataTable();
+                        cmd.Connection = Objcon;
+                        // Transaction is in progress.
+                        if (ObjTrans != null)
+                        {
+                            cmd.Transaction = ObjTrans;
+                        }
+                        ObjDA = new SqlDataAdapter();
+                        cmd.CommandText = "SELECT * FROM " + strDatabseName + ".sys.tables";
+                        _CommandText = cmd.CommandText;
+                        ObjDA.SelectCommand = cmd;
+                        ObjDA.Fill(dt);
+                        //CloseConnection();
+                        return dt;
                     }
-                    DataTable dt = new DataTable();
-                    cmd.Connection = Objcon;
-                    // Transaction is in progress.
-                    if (ObjTrans != null)
+                    catch (Exception ex)
                     {
-                        cmd.Transaction = ObjTrans;
+                        //CloseConnection();
+                        clsCommon.ShowError(ex, SetError("GetTables(string strDatabseName)", cmd.CommandText));
                     }
-                    ObjDA = new SqlDataAdapter();
-                    cmd.CommandText = "SELECT * FROM " + strDatabseName + ".sys.tables";
-                    _CommandText = cmd.CommandText;
-                    ObjDA.SelectCommand = cmd;
-                    ObjDA.Fill(dt);
-                    CloseConnection();
-                    return dt;
-                }
-                catch (Exception ex)
-                {
-                    CloseConnection();
-                    clsCommon.ShowError(ex, SetError("GetTables(string strDatabseName)", cmd.CommandText));
+                    finally
+                    {
+                        Objcon.Close();
+                    }
                 }
             }
             return null;
@@ -1811,6 +1896,10 @@ namespace CoreApp
                             ObjUtil.WriteToFile(temp + ex.ToString(), "Error");
                         }
                         clsCommon.ShowError(ex, SetError("GetColumns(string strDatabase, string strTable)", cmd.CommandText));
+                    }
+                    finally
+                    {
+                        Objcon.Close();
                     }
                 }
             }
@@ -1908,11 +1997,12 @@ namespace CoreApp
                 {
                     return;
                 }
-
-                if (Objcon.State == ConnectionState.Open || Objcon.State == ConnectionState.Broken)
+                if (Objcon != null)
                 {
-                    if (Objcon != null)
+                    if (Objcon.State == ConnectionState.Open || Objcon.State == ConnectionState.Broken)
+                    {
                         Objcon.Close();
+                    }
                 }
             }
             catch (Exception ex)
@@ -1968,6 +2058,8 @@ namespace CoreApp
             bool status = false;
             try
             {
+                if (Objcon == null)
+                    Objcon = new SqlConnection();
                 Objcon.ConnectionString = clsConnection_DAL.strConnectionString;
                 Objcon.Open();
                 status = true;
@@ -1975,7 +2067,7 @@ namespace CoreApp
             }
             catch (Exception ex)
             {
-                clsCommon.ShowError(ex, "TestConnection");
+                clsCommon.ShowError(ex, "TestConnection()");
                 status = false;
             }
             return status;
@@ -2192,7 +2284,11 @@ namespace CoreApp
                         ResetData();
                         return null;
                     }
-                    ResetData();
+                    finally
+                    {
+                        Objcon.Close();
+                        ResetData();
+                    }
                 }
             }
             return ds;
@@ -2287,7 +2383,11 @@ namespace CoreApp
                         ResetData();
                         result = false;
                     }
-                    ResetData();
+                    finally
+                    {
+                        Objcon.Close();
+                        ResetData();
+                    }
                 }
             }
             return result;

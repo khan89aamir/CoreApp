@@ -91,6 +91,10 @@ namespace CoreApp
         #endregion
         // this can be set from the calling app
         public string EmailRegex = string.Empty;
+
+        /// <summary>
+        /// MessageType
+        /// </summary>
         public enum MessageType
         {
             Office2007Blue,
@@ -103,6 +107,16 @@ namespace CoreApp
         /// Set IsAutoLog=true if you want to log coreApp level exception.
         /// </summary>
         public static bool IsAutoLog = false;
+
+        /// <summary>
+        /// Set IsAutoCloseMessage=true if you want to close messagebox.
+        /// </summary>
+        public static bool IsAutoCloseMessage = false;
+
+        /// <summary>
+        /// Set AutoCloseMessageTimer=4000 in milisecond to close messagebox.
+        /// </summary>
+        public static int AutoCloseMessageTimer = 3000;
 
 
         internal static Dictionary<string, Control> ObjPopupControl = new Dictionary<string, Control>();
@@ -146,6 +160,10 @@ namespace CoreApp
         /// 
 
         private DataGridView dgvDataPopup;
+
+        /// <summary>
+        /// 
+        /// </summary>
         public clsUtility()
         {
             c1[0] = '[';
@@ -571,9 +589,19 @@ namespace CoreApp
             else
                 kr.GlobalPaletteMode = PaletteModeManager.Office2007Blue;
 
-            //MessageBox.Show(strMessage, Title, MessageBoxButtons.OK, MessageBoxIcon.Information);
-            KryptonMessageBox.Show(strMessage, Title, MessageBoxButtons.OK, MessageBoxIcon.Information);
-            kr.ResetGlobalPaletteMode();
+            if (IsAutoCloseMessage)
+            {
+                frmAutoCloseMessageBox obj = new frmAutoCloseMessageBox();
+                obj.Text = "Info";
+                obj.lblMessage.Text = strMessage;
+                obj.ShowDialog();
+            }
+            else
+            {
+                //MessageBox.Show(strMessage, Title, MessageBoxButtons.OK, MessageBoxIcon.Information);
+                KryptonMessageBox.Show(strMessage, Title, MessageBoxButtons.OK, MessageBoxIcon.Information);
+                kr.ResetGlobalPaletteMode();
+            }
         }
 
         /// <summary>
@@ -595,9 +623,19 @@ namespace CoreApp
             else
                 kr.GlobalPaletteMode = PaletteModeManager.Office2007Blue;
 
-            //MessageBox.Show(strMessage, strProjectTitle, MessageBoxButtons.OK, MessageBoxIcon.Information);
-            KryptonMessageBox.Show(strMessage, strProjectTitle, MessageBoxButtons.OK, MessageBoxIcon.Information);
-            kr.ResetGlobalPaletteMode();
+            if (IsAutoCloseMessage)
+            {
+                frmAutoCloseMessageBox obj = new frmAutoCloseMessageBox();
+                obj.Text = "Info";
+                obj.lblMessage.Text = strMessage;
+                obj.ShowDialog();
+            }
+            else
+            {
+                //MessageBox.Show(strMessage, strProjectTitle, MessageBoxButtons.OK, MessageBoxIcon.Information);
+                KryptonMessageBox.Show(strMessage, strProjectTitle, MessageBoxButtons.OK, MessageBoxIcon.Information);
+                kr.ResetGlobalPaletteMode();
+            }
         }
 
         /// <summary>
@@ -621,9 +659,18 @@ namespace CoreApp
                 kr.GlobalPaletteMode = PaletteModeManager.Office2007Blue;
 
             //MessageBox.Show(strMessage, Title, MessageBoxButtons.OK, MessageBoxIcon.Error);
-
-            KryptonMessageBox.Show(strMessage, Title, MessageBoxButtons.OK, MessageBoxIcon.Error);
-            kr.ResetGlobalPaletteMode();
+            if (IsAutoCloseMessage)
+            {
+                frmAutoCloseMessageBox obj = new frmAutoCloseMessageBox();
+                obj.Text = "Error";
+                obj.lblMessage.Text = strMessage;
+                obj.ShowDialog();
+            }
+            else
+            {
+                KryptonMessageBox.Show(strMessage, Title, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                kr.ResetGlobalPaletteMode();
+            }
         }
 
         /// <summary>
@@ -645,10 +692,20 @@ namespace CoreApp
             else
                 kr.GlobalPaletteMode = PaletteModeManager.Office2007Blue;
 
-            //MessageBox.Show(strMessage, strProjectTitle, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            if (IsAutoCloseMessage)
+            {
+                frmAutoCloseMessageBox obj = new frmAutoCloseMessageBox();
+                obj.Text = "Error";
+                obj.lblMessage.Text = strMessage;
+                obj.ShowDialog();
+            }
+            else
+            {
+                //MessageBox.Show(strMessage, strProjectTitle, MessageBoxButtons.OK, MessageBoxIcon.Error);
 
-            KryptonMessageBox.Show(strMessage, strProjectTitle, MessageBoxButtons.OK, MessageBoxIcon.Error);
-            kr.ResetGlobalPaletteMode();
+                KryptonMessageBox.Show(strMessage, strProjectTitle, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                kr.ResetGlobalPaletteMode();
+            }
         }
 
         /// <summary>
@@ -984,7 +1041,15 @@ namespace CoreApp
                 {
                     regKey.DeleteValue(strVal, true);
                 }
-                catch { }
+                catch (Exception ex)
+                {
+                    if (IsAutoLog)
+                    {
+                        string temp = "Application Name : " + strVal + " Application executable path : " + strPath + " ";
+                        WriteToFile(temp + ex.ToString(), "Error");
+                    }
+
+                }
                 regKey.SetValue(strVal, strPath);
                 regKey.Close();
             }
@@ -2197,6 +2262,12 @@ namespace CoreApp
             return true;
         }
 
+        /// <summary>
+        /// Check FormRights with Operation
+        /// </summary>
+        /// <param name="FormID"></param>
+        /// <param name="OperationID"></param>
+        /// <returns></returns>
         public static bool HasFormRights(int FormID, int OperationID)
         {
             bool Result = false;
@@ -2256,6 +2327,11 @@ namespace CoreApp
             return Result;
         }
 
+        /// <summary>
+        /// Check FormRights
+        /// </summary>
+        /// <param name="FormID"></param>
+        /// <returns></returns>
         public static bool HasFormRights(int FormID)
         {
             bool Result = false;
@@ -2371,6 +2447,30 @@ namespace CoreApp
                 clsCommon.ShowError(ex.ToString(), "GetListofAllForms(Type[] types)");
             }
             return list;
+        }
+
+        /// <summary>
+        /// Close All Opened Application
+        /// </summary>
+        public void CloseAllOpenedApplication()
+        {
+            try
+            {
+                System.Diagnostics.Process[] processes = System.Diagnostics.Process.GetProcesses().Where(p => (long)p.MainWindowHandle != 0).ToArray();
+                foreach (System.Diagnostics.Process process in processes)
+                {
+                    // Skip your own process (the current application)
+                    if (process.Id != System.Diagnostics.Process.GetCurrentProcess().Id)
+                    {
+                        // Close the application (terminate the process)
+                        process.Kill();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                clsCommon.ShowError(ex.ToString(), "CloseAllOpenedApplication()");
+            }
         }
     }
 }

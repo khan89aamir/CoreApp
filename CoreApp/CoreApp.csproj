@@ -93,6 +93,12 @@
     <Compile Include="ErrorWindow.designer.cs">
       <DependentUpon>ErrorWindow.cs</DependentUpon>
     </Compile>
+    <Compile Include="frmAutoCloseMessageBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmAutoCloseMessageBox.Designer.cs">
+      <DependentUpon>frmAutoCloseMessageBox.cs</DependentUpon>
+    </Compile>
     <Compile Include="frmDataPopup.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -126,6 +132,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ErrorWindow.resx">
       <DependentUpon>ErrorWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmAutoCloseMessageBox.resx">
+      <DependentUpon>frmAutoCloseMessageBox.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmDataPopup.resx">
       <DependentUpon>frmDataPopup.cs</DependentUpon>
