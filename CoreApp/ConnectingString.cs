@@ -143,7 +143,8 @@ namespace CoreApp
 
         private void button3_Click(object sender, EventArgs e)
         {
-            Clipboard.SetText(txtDataSource.Text);
+            //Clipboard.SetText(txtDataSource.Text);
+            clsUtility.IsAutoCloseMessage = true;
             clsUtility.ShowInfoMessage("Connection string copied to the clipboard");
         }
 

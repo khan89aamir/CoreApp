@@ -628,7 +628,7 @@ namespace CoreApp
                 frmAutoCloseMessageBox obj = new frmAutoCloseMessageBox();
                 obj.Text = "Info";
                 obj.lblMessage.Text = strMessage;
-                obj.ShowDialog();
+                obj.Show();
             }
             else
             {

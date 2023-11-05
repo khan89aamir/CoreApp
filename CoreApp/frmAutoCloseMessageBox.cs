@@ -25,6 +25,12 @@ namespace CoreApp
             if (timer1.Interval == clsUtility.AutoCloseMessageTimer)
             {
                 timer1.Stop();
+
+                Form activeForm = Form.ActiveForm;
+                if (activeForm != null)
+                {
+                    activeForm.Close();
+                }
                 this.Close();
             }
 

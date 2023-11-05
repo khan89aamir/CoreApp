@@ -44,7 +44,7 @@ namespace CoreApp
             this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnClose.AutoSize = true;
             this.btnClose.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnClose.Location = new System.Drawing.Point(150, 80);
+            this.btnClose.Location = new System.Drawing.Point(226, 52);
             this.btnClose.Margin = new System.Windows.Forms.Padding(2);
             this.btnClose.Name = "btnClose";
             this.btnClose.PaletteMode = ComponentFactory.Krypton.Toolkit.PaletteMode.Office2007Blue;
@@ -81,7 +81,7 @@ namespace CoreApp
             this.flowLayoutPanel1.Controls.Add(this.lblMessage);
             this.flowLayoutPanel1.Location = new System.Drawing.Point(59, 13);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(153, 64);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(229, 36);
             this.flowLayoutPanel1.TabIndex = 377;
             // 
             // picMessageIcon
@@ -96,7 +96,7 @@ namespace CoreApp
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(223, 113);
+            this.ClientSize = new System.Drawing.Size(299, 85);
             this.Controls.Add(this.picMessageIcon);
             this.Controls.Add(this.flowLayoutPanel1);
             this.Controls.Add(this.btnClose);
@@ -106,7 +106,6 @@ namespace CoreApp
             this.Name = "frmAutoCloseMessageBox";
             this.Opacity = 0D;
             this.ShowIcon = false;
-            this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Load += new System.EventHandler(this.frmAutoCloseMessageBox_Load);
             this.flowLayoutPanel1.ResumeLayout(false);
