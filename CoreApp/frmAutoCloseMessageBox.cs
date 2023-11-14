@@ -29,7 +29,10 @@ namespace CoreApp
                 Form activeForm = Form.ActiveForm;
                 if (activeForm != null)
                 {
-                    activeForm.Close();
+                    clsUtility clsUtility = new clsUtility();
+                    clsUtility.WriteToFile("activeForm Name : " + activeForm.Name + " activeForm Text : " + activeForm.Text, "AutoCloseMessage");
+                    if (activeForm.Name == "KryptonMessageBox" || activeForm.Name == "frmAutoCloseMessageBox")
+                        activeForm.Close();
                 }
                 this.Close();
             }

@@ -1041,10 +1041,11 @@ namespace CoreApp
         {
             try
             {
+                string strFilePath = AppDomain.CurrentDomain.BaseDirectory + "/AppConfig/ServerConfig.sc";
                 string str = string.Empty;
-                if (File.Exists("AppConfig/ServerConfig.sc"))
+                if (File.Exists(strFilePath))
                 {
-                    using (StreamReader sw = new StreamReader("AppConfig/ServerConfig.sc"))
+                    using (StreamReader sw = new StreamReader(strFilePath))
                     {
                         // if user is using encrypted connection string then decrypt it else just read it.
                         if (_IsEncrypted)
@@ -1065,17 +1066,17 @@ namespace CoreApp
                 }
                 else
                 {
-                    if (Directory.Exists("AppConfig"))
+                    if (Directory.Exists(AppDomain.CurrentDomain.BaseDirectory + "/AppConfig"))
                     {
                         CreateConnectionString();
-                        StreamWriter sw = new StreamWriter("AppConfig/ServerConfig.sc");
+                        StreamWriter sw = new StreamWriter(strFilePath);
                         sw.WriteLine(CreateConnectionString());
                         sw.Close();
                     }
                     else
                     {
-                        Directory.CreateDirectory("AppConfig");
-                        StreamWriter sw = new StreamWriter("AppConfig/ServerConfig.sc");
+                        Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "/AppConfig");
+                        StreamWriter sw = new StreamWriter(strFilePath);
                         sw.WriteLine(CreateConnectionString());
                         sw.Close();
                     }
@@ -2126,7 +2127,8 @@ namespace CoreApp
 
         public string GetCurrentDBName(bool b)
         {
-            string a = ReadConStringFromFile("AppConfig/ServerConfig.sc", b);
+            //string a = ReadConStringFromFile("AppConfig/ServerConfig.sc", b);
+            string a = ReadConStringFromFile(AppDomain.CurrentDomain.BaseDirectory + "/AppConfig/ServerConfig.sc", b);
             string[] arr = a.Split(new char[] { ';', '=' });
             return arr[3].ToString();
         }

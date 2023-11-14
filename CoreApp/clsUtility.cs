@@ -2233,10 +2233,13 @@ namespace CoreApp
             try
             {
                 string strPath = string.Empty;
-                strPath = System.Environment.CurrentDirectory + "//Logs";
-                if (!Directory.Exists(System.Environment.CurrentDirectory + "//Logs"))
+                //strPath = System.Environment.CurrentDirectory + "//Logs";
+                strPath = AppDomain.CurrentDomain.BaseDirectory + "//Logs";
+
+                //if (!Directory.Exists(System.Environment.CurrentDirectory + "//Logs"))
+                if (!Directory.Exists(strPath))
                 {
-                    Directory.CreateDirectory(System.Environment.CurrentDirectory + "//Logs");
+                    Directory.CreateDirectory(strPath);
                 }
                 filename = strPath + "//" + filename + "_" + DateTime.Now.ToString("yyyyMMdd") + ".log";
                 using (StreamWriter sw = new StreamWriter(filename, true))
