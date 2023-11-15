@@ -16,7 +16,7 @@ namespace CoreApp
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            //Application.Run(new frmAutoCloseMessageBox());
+            Application.Run(new frmAutoCloseMessageBox());
             //Application.Run(new ConnectingString());
         }
     }

@@ -104,7 +104,6 @@ namespace CoreApp
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "frmAutoCloseMessageBox";
-            this.Opacity = 0D;
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Load += new System.EventHandler(this.frmAutoCloseMessageBox_Load);

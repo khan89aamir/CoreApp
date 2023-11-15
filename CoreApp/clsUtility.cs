@@ -2475,5 +2475,17 @@ namespace CoreApp
                 clsCommon.ShowError(ex.ToString(), "CloseAllOpenedApplication()");
             }
         }
+
+        /// <summary>
+        /// Display popup alert message with title with auto close
+        /// </summary>
+        /// <param name="msg">Display message text</param>
+        /// <param name="type">message type</param>
+        /// <param name="title">message title</param>
+        public void Alert(string msg, Form_Alert.enmType type, string title = "")
+        {
+            Form_Alert frm = new Form_Alert();
+            frm.showAlert(msg, type, title);
+        }
     }
 }
