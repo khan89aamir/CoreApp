@@ -42,7 +42,7 @@ namespace CoreApp
 
         private void button1_Click(object sender, EventArgs e)
         {
-            if (txtDataSource.Text.Trim().Length==0)
+            if (txtDataSource.Text.Trim().Length == 0)
             {
                 clsUtility.ShowInfoMessage("Enter Connecting String First.", "Connection String Builder.");
                 return;
@@ -52,11 +52,11 @@ namespace CoreApp
                 clsUtility.ShowInfoMessage("Connecting String is already encrypted.", "Connection String Builder.");
                 return;
             }
-            
-           string str=  Encrypt(txtDataSource.Text,true);
-           txtDataSource.Text = str;
-           isEncrypt = true;
-           isDecrypt = false;
+
+            string str = Encrypt(txtDataSource.Text, true);
+            txtDataSource.Text = str;
+            isEncrypt = true;
+            isDecrypt = false;
         }
         /// <summary>
         /// Encrypt a string using dual encryption method. Return a encrypted cipher Text
@@ -143,8 +143,8 @@ namespace CoreApp
 
         private void button3_Click(object sender, EventArgs e)
         {
-            //Clipboard.SetText(txtDataSource.Text);
-            clsUtility.IsAutoCloseMessage = true;
+            //clsUtility.IsAutoCloseMessage = true;
+            Clipboard.SetText(txtDataSource.Text);
             clsUtility.ShowInfoMessage("Connection string copied to the clipboard");
         }
 
@@ -158,7 +158,7 @@ namespace CoreApp
             sw.WriteLine(txtDataSource.Text);
             sw.Close();
             DirectoryInfo d = new DirectoryInfo("AppConfig");
-            clsUtility.ShowInfoMessage("Connection string is saved successfully.\nFile Path: "+d.FullName, "CoreApp");
+            clsUtility.ShowInfoMessage("Connection string is saved successfully.\nFile Path: " + d.FullName, "CoreApp");
         }
     }
 }
